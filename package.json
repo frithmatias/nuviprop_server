@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "description": "Backend para web de inmobiliarias.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matias Frith",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "google-auth-library": "^5.5.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.7.9",
+    "mongoose-unique-validator": "^2.0.3"
+  }
+}
