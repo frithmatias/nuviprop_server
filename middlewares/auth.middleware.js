@@ -19,7 +19,6 @@ exports.verificaToken = function(req, res, next) {
 
     //var token = req.query.token;
     const userToken = req.get('x-token' || '');
-    console.log('REQ.QUERY: ' , req.query);
     jwt.verify(userToken, SEED, (err, decoded) => {
         if (err) {
             return res.status(401).json({ //401 UNAUTHORIZED
