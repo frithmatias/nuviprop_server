@@ -34,16 +34,23 @@ var app = express();
 // ==================================================
 // MIDDLEWARE CORS
 // ==================================================
-
-app.use(function(req, res, next) {
+// Hay varias maneras de solucionar el problema con los CORS
+// https://enable-cors.org/server_expressjs.html
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, x-token"
   );
   res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
   next();
 });
+// O bien instalando cors 
+// $npm install cors 
+// var cors = require("cors");
+// app.use(cors({ origin: true, credentials: true }));
+
+
 
 // .USE() es un MIDDLEWARE, cualquier petición que llegue primero va a pasar por esta función.
 // Body Parser
@@ -60,10 +67,10 @@ app.use(fileUpload());
 // Importar Rutas
 // ==================================================
 var loginRoutes = require("./routes/login.routes");
-var userRoutes = require("./routes/user.routes");
-var propiedadRoutes = require("./routes/propiedad.routes");
+var usuariosRoutes = require("./routes/usuarios.routes");
+var propiedadesRoutes = require("./routes/propiedades.routes");
 // var busquedaRoutes = require('./routes/busqueda');
-var uploadRoutes = require("./routes/upload.routes");
+var uploadsRoutes = require("./routes/uploads.routes");
 var imagenesRoutes = require("./routes/imagenes.routes");
 // var appRoutes = require('./routes/app');
 
@@ -71,10 +78,10 @@ var imagenesRoutes = require("./routes/imagenes.routes");
 // Asignar Rutas
 // ==================================================
 app.use("/login", loginRoutes);
-app.use("/user", userRoutes);
-app.use("/propiedad", propiedadRoutes);
+app.use("/usuarios", usuariosRoutes);
+app.use("/propiedades", propiedadesRoutes);
 // app.use('/busqueda', busquedaRoutes);
-app.use("/upload", uploadRoutes);
+app.use("/uploads", uploadsRoutes);
 app.use("/imagenes", imagenesRoutes);
 // app.use('/', appRoutes);
 
@@ -98,7 +105,7 @@ app.listen(3000, () => {
 });
 
 /*
-Que es lo mismo que 
+Que es lo mismo que
 app.listen(3000, function(){
 
 })

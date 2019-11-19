@@ -4,20 +4,10 @@ var Schema = mongoose.Schema;
 var propiedadSchema = new Schema(
   {
     // recibe un objeto de JS
-    zonificacion: {
-      type: String,
-      ref: "Zonificacion",
-      required: [true, "La zonificacion es necesaria"]
-    },
-    pais: {
-      type: String,
-      ref: "Pais",
-      required: [true, "El pais es necesario"]
-    },
+    zonificacion: { type: String, ref: "Zonificacion", required: [true, "La zonificacion es necesaria"] },
+    pais: { type: String, ref: "Pais", required: [true, "El pais es necesario"] },
     provincia: {
-      type: String,
-      ref: "Provincia",
-      required: [true, "La provincia es necesaria"]
+      type: String, ref: "Provincia", required: [true, "La provincia es necesaria"]
     },
     ciudad: {
       type: String,

@@ -8,6 +8,6 @@ var ImageController = require('../controllers/imagenes.controller');
 var mdAuth = require('../middlewares/auth.middleware');
 
 // Rutas
-app.get('/:tipo/:img', ImageController.getImage);
+app.get('/:tipo/:id/:img', ImageController.getImage);
 
 module.exports = app;

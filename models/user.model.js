@@ -16,8 +16,8 @@ var usuarioSchema = new Schema({
     unique: true
   },
   nombre: { type: String, required: [true, "El nombre es necesario"] },
-  apellido: { type: String, required: [true, "El apellido es necesario"] },
-  nacimiento: { type: String, required: true },
+  apellido: { type: String, required: [false, "El apellido es necesario"] },
+  nacimiento: { type: String, required: false },
   ubicacion: { type: String, required: false, default: null },
   password: { type: String, required: [true, "El password es necesario"] },
   img: { type: String, required: false, default: "no-img.jpg" },

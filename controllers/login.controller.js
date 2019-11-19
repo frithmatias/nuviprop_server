@@ -8,6 +8,7 @@ var SEED = require("../config/config").SEED;
 
 // Google Login
 var GOOGLE_CLIENT_ID = require("../config/config").GOOGLE_CLIENT_ID;
+// Las llaves en {OAuth2Client} es una simple destructuración para extraer el paquete 'google-auth-library' 
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
@@ -33,6 +34,7 @@ function updateToken(req, res) {
 // Autenticación Google
 // ==================================================
 async function verify(token) {
+  console.log('Verificando desde VERIFY:', token);
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: GOOGLE_CLIENT_ID // Specify the GOOGLE_CLIENT_ID of the app that accesses the backend
@@ -57,7 +59,6 @@ async function loginGoogle(req, res) {
   // app.post('/google', async(req, res) => { //async para poder usar el await verify(token) tengo que usar el async
   var token = req.body.token;
   // El token que me viene en el BODY, es el token que recibio el frontend desde google, y que ahora lo envía al backend para recibirlo aca.
-
   var googleUser = await verify(token) // devuelve una promesa
     .catch(err => {
       res.status(403).json({
@@ -67,6 +68,15 @@ async function loginGoogle(req, res) {
         error: err
       });
     });
+
+  console.log('googleUser: ', googleUser);
+
+  if (!googleUser) {
+    return res.status(500).json({
+      ok: false,
+      message: 'No se pudo obtener el usuario de Google.'
+    });
+  }
 
   // si la promesa no devuelve error busco el usuario en la base de datos.
   UserModel.findOne({ email: googleUser.email }, (err, usuarioDB) => {
@@ -124,10 +134,12 @@ async function loginGoogle(req, res) {
 
       usuario.email = googleUser.email;
       usuario.nombre = googleUser.nombre;
-      usuario.email = googleUser.email;
+      usuario.apellido = googleUser.apellido;
+      usuario.nacimiento = googleUser.nacimiento;
+      usuario.ubicacion = googleUser.ubicacion;
+      usuario.password = ":)"; // se va a grabar asi, pero cuando se autentica va a pasar a un hash.
       usuario.img = googleUser.img;
       usuario.google = true;
-      usuario.password = ":)"; // se va a grabar asi, pero cuando se autentica va a pasar a un hash.
       console.log("Nuevo objeto usuario", usuario);
       usuario.save((err, usuarioDB) => {
         if (err) {
@@ -242,4 +254,5 @@ function obtenerMenu(ROLE) {
   return menu;
 }
 
+// TODO: Implementar google sing-in, Angular Avanzado capitulo 12
 module.exports = { updateToken, login, loginGoogle };
