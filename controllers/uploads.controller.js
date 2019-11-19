@@ -41,7 +41,7 @@ function uploadImagen(req, res) {
   var archivo = req.files.imagen; //'imagen' es el nombre dado en body>form-data en POSTMAN
   var nombreCortado = archivo.name.split(".");
   var extensionArchivo = nombreCortado[nombreCortado.length - 1];
-
+  console.log('extension: ', extensionArchivo);
   // extensiones permitidas
   var extensionesValidas = ["png", "jpg", "gif", "jpeg"];
   if (extensionesValidas.indexOf(extensionArchivo) < 0) {
@@ -56,12 +56,12 @@ function uploadImagen(req, res) {
       }
     });
   }
-  // si no existe la carpeta ej. /uploads/propieades/RtY78GhF24uItRe87ui, la crea
+  // si no existe la carpeta ej. /uploads/propiedades/RtY78GhF24uItRe87ui, la crea
   crearCarpeta(tipo, id);
 
   var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`; // Uso los backticks para hacer un template literal
   var path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
-
+  console.log('path: ', path);
   archivo.mv(path, err => {
     // segundo argumento es un callback, recibe un error (claro que SOLO si se recibe un error).
     if (err) {
@@ -72,7 +72,7 @@ function uploadImagen(req, res) {
         errors: err
       });
     }
-    // Ya tengo la imagen en uploads/usuarios ahora
+    // Ya tengo la imagen en uploads/usuario ahora
     // 1. borro la imagen vieja
     // 2. guardo el nombre en la bbdd
     grabarImagenBD(tipo, id, nombreArchivo, res);
@@ -80,7 +80,7 @@ function uploadImagen(req, res) {
 }
 
 function grabarImagenBD(tipo, id, nombreArchivo, res) {
-  //usuarios 5c75c21b70933c1784cdc8db 5c75c21b70933c1784cdc8db-924.jpg ServerResponse {...}
+  //usuario 5c75c21b70933c1784cdc8db 5c75c21b70933c1784cdc8db-924.jpg ServerResponse {...}
   // console.log("data en subirportipo(): ", tipo, id, nombreArchivo);
   if (tipo === "usuarios") {
     UserModel.findById(id, (err, resUserModel) => {
@@ -90,7 +90,7 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
           mensaje: "Usuario no existe",
           errors: {
             message:
-              "El usuario que intenta acutalizar NO existe en la coleccion usuarios."
+              "El usuario que intenta acutalizar NO existe en la coleccion usuario."
           }
         });
       }
@@ -132,13 +132,12 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
         });
       }
 
-      // en usuarios tengo el valor IMG donde se almacena la foto del usuario
-      // en propiedades, puedo tener muchas fotos, pero NO necesito borrarlas
+      // en usuario tengo el valor IMG donde se almacena la foto del usuario
+      // en propiedad, puedo tener muchas fotos, pero NO necesito borrarlas
       // al subir una nueva no tengo que borrar las anteriores, puedo comentar
       // las lineas para borrar la imagen anterior.
-      // TODO: Implementar metodo para borrar una foto en particular.
-      // var pathViejo = `./uploads/usuarios/${id}/${resPropModel.img}`;
-      // var pathNuevo = `./uploads/usuarios/${id}/${nombreArchivo}`;
+      // var pathViejo = `./uploads/usuario/${id}/${resPropModel.img}`;
+      // var pathNuevo = `./uploads/usuario/${id}/${nombreArchivo}`;
 
       // Si ya existe una imagen subida por ese usuario, la borra.
       // if (fs.existsSync(pathViejo)) {
@@ -158,16 +157,18 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
       });
     });
   }
+
+
 }
 
 function deleteImagen() {
-  // TODO: Implementar borrar una imagen en las propiedades, tengo que quitar un item con el
+  // TODO: Implementar borrar una imagen en las propiedad, tengo que quitar un item con el
   // id que me viene como parametro que es el nombre de la foto y quitarlo del array.
 }
 
 function crearCarpeta(tipo, id) {
-  // ./uploads/propiedades
-  // ./uploads/usuarios
+  // ./uploads/propiedad
+  // ./uploads/usuario
   var pathUser = path.resolve(__dirname, "../uploads", tipo, id);
   var existe = fs.existsSync(pathUser);
   if (!existe) {
