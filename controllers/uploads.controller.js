@@ -1,7 +1,7 @@
 var express = require("express");
 var app = express();
 
-var UserModel = require("../models/user.model");
+var UserModel = require("../models/usuario.model");
 var PropModel = require("../models/propiedad.model");
 
 var fs = require("fs");

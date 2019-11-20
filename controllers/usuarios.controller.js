@@ -1,5 +1,5 @@
 var bcrypt = require("bcryptjs");
-var UserModel = require("../models/user.model");
+var UserModel = require("../models/usuario.model");
 
 // var mdAuth = require('../middlewares/autenticacion');
 
@@ -144,6 +144,7 @@ function updateUser(req, res) {
 // Borrar un usuario
 // ==================================================
 function deleteUser(req, res) {
+  console.log('borrando usuario:', req.params);
   var id = req.params.id;
 
   UserModel.findByIdAndRemove(id, (err, usuarioBorrado) => {

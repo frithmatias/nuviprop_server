@@ -4,11 +4,26 @@
 var express = require("express");
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
+var fs = require("fs");
+var path = require("path");
 
 // ==================================================
 // Inicializar variables
 // ==================================================
 var app = express();
+
+
+// ==================================================
+// Morgan
+// ==================================================
+var morgan = require("morgan");
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+// setup the logger
+app.use(morgan('combined', { stream: accessLogStream }));
+
+
+
 
 // ==================================================
 // EJEMPLO DE MQTT (npm i mqtt)
@@ -69,7 +84,7 @@ app.use(fileUpload());
 var loginRoutes = require("./routes/login.routes");
 var usuariosRoutes = require("./routes/usuarios.routes");
 var propiedadesRoutes = require("./routes/propiedades.routes");
-// var busquedaRoutes = require('./routes/busqueda');
+var busquedaRoutes = require('./routes/busqueda.routes');
 var uploadsRoutes = require("./routes/uploads.routes");
 var imagenesRoutes = require("./routes/imagenes.routes");
 // var appRoutes = require('./routes/app');
@@ -80,7 +95,7 @@ var imagenesRoutes = require("./routes/imagenes.routes");
 app.use("/login", loginRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/propiedades", propiedadesRoutes);
-// app.use('/busqueda', busquedaRoutes);
+app.use('/busqueda', busquedaRoutes);
 app.use("/uploads", uploadsRoutes);
 app.use("/imagenes", imagenesRoutes);
 // app.use('/', appRoutes);
