@@ -1,5 +1,5 @@
 // Models
-var UserModel = require("../models/user.model");
+var UserModel = require("../models/usuario.model");
 
 // JWT y Passwords
 var bcrypt = require("bcryptjs");

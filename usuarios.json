@@ -1,0 +1,31 @@
+{
+    "ok": true,
+    "mensaje": "Peticion GET de USUARIOS realizada correctamente.",
+    "usuarios": [
+        {
+            "img": "5dc87bd8d5756a191422c938-58.png",
+            "role": "ADMIN_ROLE",
+            "google": false,
+            "_id": "5dc87bd8d5756a191422c938",
+            "email": "matias@matias.com",
+            "nombre": "Matias"
+        },
+        {
+            "img": "",
+            "role": "USER_ROLE",
+            "google": false,
+            "_id": "5dc87c8ed5756a191422c939",
+            "email": "romina.derecho@gmail.com",
+            "nombre": "Romina"
+        },
+        {
+            "img": "no-img.jpg",
+            "role": "USER_ROLE",
+            "google": false,
+            "_id": "5dcf1c12fc1fd217f814c333",
+            "email": "test@test.com",
+            "nombre": "NombrePba"
+        }
+    ],
+    "total": 3
+}

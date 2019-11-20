@@ -1,6 +1,13 @@
 var jwt = require("jsonwebtoken");
 var SEED = require("../config/config").SEED;
 
+
+
+// app.use(morgan('combined'));
+//app.use(morgan('tiny'));
+//morgan(':method :url :status :res[content-length] - :response-time ms')
+
+
 // ==================================================
 // Verificar TOKEN
 // ==================================================
