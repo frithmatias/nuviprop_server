@@ -80,7 +80,17 @@ function buscarPropiedades(patron, regex) {
 
     return new Promise((resolve, reject) => {
 
-        Propiedad.find({ nombre: regex })
+        Propiedad.find({})
+            .or([
+                { descripcion: regex },
+                { zonificacion: regex },
+                { pais: regex },
+                { provincia: regex },
+                { ciudad: regex },
+                { barrio: regex },
+                { tipopropiedad: regex },
+                { ambienteslista: regex }
+            ])
             .populate('usuario', 'nombre email')
             .exec((err, propiedades) => {
 

@@ -3,102 +3,45 @@ var Schema = mongoose.Schema;
 
 var propiedadSchema = new Schema(
   {
+
     // recibe un objeto de JS
-    zonificacion: { type: String, ref: "Zonificacion", required: [true, "La zonificacion es necesaria"] },
-    pais: { type: String, ref: "Pais", required: [true, "El pais es necesario"] },
-    provincia: {
-      type: String, ref: "Provincia", required: [true, "La provincia es necesaria"]
-    },
-    ciudad: {
-      type: String,
-      ref: "Ciudad",
-      required: [true, "La ciudad es necesaria"]
-    },
-    barrio: {
-      type: String,
-      ref: "Barrio",
-      required: [true, "El barrio es necesario"]
-    },
-    tipopropiedad: {
-      type: String,
-      ref: "TipoPropiedad",
-      required: [true, "El tipo de propiedad es necesario"]
-    },
+    operacion: { type: String, required: [true, "El tipo de operación es necesaria"] },
+    tipopropiedad: { type: String, required: [true, "El tipo de propiedad es necesario"] },
+    pais: { type: String, required: [true, "El pais es necesario"] },
+    provincia: { type: String, required: [true, "La provincia es necesaria"] },
+    ciudad: { type: String, required: [true, "La ciudad es necesaria"] },
+    barrio: { type: String, required: [true, "El barrio es necesario"] },
     calle: { type: String, required: [true, "La calle es necesaria"] },
     numero: { type: Number, required: [true, "El numero es necesario"] },
-    descripcion: {
-      type: String,
-      required: [true, "La descripcion es necesaria"]
-    },
-    dormitorios: { type: Number, required: true },
-    ambientes: {
-      type: Number,
-      required: [true, "Los ambientes son necesarios"]
-    },
-    ambienteslista: {
-      type: String,
-      ref: "AmbientesLista",
-      required: [true, "Debe existir una lista de ambientes"]
-    },
-    serviciosbasicos: {
-      type: String,
-      ref: "ServiciosBasicos",
-      required: [true, "Debe existir una lista de servicios básicos"]
-    },
-    serviciosgenerales: {
-      type: String,
-      ref: "ServiciosGenerales",
-      required: [true, "Debe existir una lista de servicios generales"]
-    },
-    expensas: { type: Number, required: [true, "Las expensas son necesarias"] },
-    banios: {
-      type: Number,
-      required: [true, "La cantidad de baños es necesaria"]
-    },
-    cocheras: {
-      type: Number,
-      required: [true, "La cantidad de cocheras son necesarias"]
-    },
-    terraza: { type: Boolean, required: false, default: null },
-    aptocredito: {
-      type: Boolean,
-      required: [true, "El aptocredito es necesario"]
-    },
+    imgs: { type: [String], required: false },
+    descripcion: { type: String, required: false },
+    ambientes: { type: Number, required: false },
+    dormitorios: { type: Number, required: false },
+    terraza: { type: Boolean, required: false },
+    zonificacion: { type: String, required: false },
+    ambienteslista: { type: String, required: false },
+    serviciosbasicos: { type: String, required: false },
+    serviciosgenerales: { type: String, required: false },
+    expensas: { type: Number, required: false },
+    banios: { type: Number, required: false },
+    cocheras: { type: Number, required: false },
+    aptocredito: { type: Boolean, required: false },
     antiguedad: { type: Number, required: false },
-    techo: {
-      type: String,
-      ref: "TipoTecho",
-      required: [true, "El techo es necesario"]
-    },
-    estado: {
-      type: String,
-      ref: "Estado",
-      required: [true, "El estado es necesario"]
-    },
-    disposicion: {
-      type: String,
-      ref: "Disposicion",
-      required: [true, "La disposicion es necesaria"]
-    },
-    operacion: {
-      type: String,
-      ref: "Operacion",
-      required: [true, "El tipo de operación es necesaria"]
-    },
-    precio: { type: Number, required: [true, "El precio es necesario"] },
-    dolares: {
-      type: Boolean,
-      required: [true, "El Tipo de moneda es necesaria"]
-    },
-    supcubierta: {
-      type: Number,
-      required: [true, "La superficie cubierta es necesaria"]
-    },
-    supdescubierta: {
-      type: Number,
-      required: [true, "La superficie descubierta es necesaria"]
-    },
-    imgs: { type: [String], required: false }
+    techo: { type: String, required: false },
+    estado: { type: String, required: false },
+    disposicion: { type: String, required: false },
+    orientacion: { type: String, required: false },
+
+    precio: { type: Number, required: false },
+    dolares: { type: Boolean, required: false },
+    supcubierta: { type: Number, required: false },
+    supdescubierta: { type: Number, required: false },
+    usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
+    inmobiliaria: {
+      type: Schema.Types.ObjectId,
+      ref: 'Inmobiliaria',
+      required: [true, 'El id inmobiliaria es un campo obligatorio ']
+    }
   },
   { collection: "propiedades" }
 );
