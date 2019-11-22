@@ -84,7 +84,8 @@ app.use(fileUpload());
 var loginRoutes = require("./routes/login.routes");
 var usuariosRoutes = require("./routes/usuarios.routes");
 var propiedadesRoutes = require("./routes/propiedades.routes");
-var busquedaRoutes = require('./routes/busqueda.routes');
+var inmobiliariasRoutes = require("./routes/inmobiliarias.routes");
+var busquedaRoutes = require('./routes/buscar.routes');
 var uploadsRoutes = require("./routes/uploads.routes");
 var imagenesRoutes = require("./routes/imagenes.routes");
 // var appRoutes = require('./routes/app');
@@ -95,7 +96,8 @@ var imagenesRoutes = require("./routes/imagenes.routes");
 app.use("/login", loginRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/propiedades", propiedadesRoutes);
-app.use('/busqueda', busquedaRoutes);
+app.use("/inmobiliarias", inmobiliariasRoutes);
+app.use('/buscar', busquedaRoutes);
 app.use("/uploads", uploadsRoutes);
 app.use("/imagenes", imagenesRoutes);
 // app.use('/', appRoutes);
@@ -103,13 +105,19 @@ app.use("/imagenes", imagenesRoutes);
 // ==================================================
 // Conexión a la base de datos.
 // ==================================================
-mongoose.connection.openUri("mongodb://localhost:27017/inMob", (err, res) => {
-  if (err) throw err;
-  console.log(
-    "MongoDB corriendo en el puerto 27017: \x1b[32m%s\x1b[0m",
-    "ONLINE"
-  );
-}); // Segundo argumento es una función de callback.
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+mongoose
+  .connect('mongodb://localhost:27017/inMob', { useNewUrlParser: true })
+  .then(() => {
+    console.log('MongoDB corriendo en el puerto 27017: \x1b[32m%s\x1b[0m', 'ONLINE');
+  })
+  .catch((err) => {
+    throw err;
+  });
+
+
 
 // Escuchar peticiones
 app.listen(3000, () => {

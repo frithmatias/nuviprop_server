@@ -13,7 +13,7 @@ function getProps(req, res) {
   desde = Number(desde);
 
   //Propiedad.find({a, 'nombre email img role')
-  PropModel.find({}, "nombre email img role google")
+  PropModel.find({})
     .skip(desde)
     .limit(5)
     .exec((err, propiedads) => {
@@ -31,13 +31,60 @@ function getProps(req, res) {
       PropModel.count({}, (err, cantidad) => {
         res.status(200).json({
           ok: true,
-          mensaje: "Peticion GET de USUARIOS realizada correctamente.",
+          mensaje: "Peticion GET de PROPIEDADES realizada correctamente.",
           propiedads: propiedads,
           total: cantidad
           // En standar ES6 no haría falta definir propiedads: propiedads porque es como redundante,
           // pero lo vamos a dejar así para que sea mas claro.
         });
       });
+    });
+}
+
+// ==================================================
+// Obtener sólo una propiedad por su id
+// ==================================================
+function getProp(req, res) {
+
+  // desde es una variable que utilizo para decile desde donde empiece a traer registros,
+  // y desde ahí me traiga los siguientes 5 registros.
+  // http://localhost:3000/propiedad?desde=10
+  var id = req.params.id || 0;
+  console.log(id);
+  console.log(req.params);
+  //Propiedad.find({a, 'nombre email img role')
+  PropModel.findById(id)
+    .populate('usuario', 'nombre img email')
+    .populate('inmobiliaria')
+    .exec((err, propiedad) => {
+      // el segundo argumento es un callback (err, propiedads) =>
+
+      if (err) {
+        return res.status(500).json({
+          // ERROR DE BASE DE DATOS
+          ok: false,
+          mensaje: "Error cargando propiedad",
+          errors: err
+        });
+      }
+      if (!propiedad) {
+        return res.status(400).json({
+          // ERROR DE BASE DE DATOS
+          ok: false,
+          mensaje: "No existe la propiedad con id " + id,
+          errors: { message: 'No existe un hospital con ese ID' }
+        });
+      }
+
+
+      res.status(200).json({
+        ok: true,
+        mensaje: "Peticion GET de PROPIEDADES realizada correctamente.",
+        propiedad: propiedad
+        // En standar ES6 no haría falta definir propiedads: propiedads porque es como redundante,
+        // pero lo vamos a dejar así para que sea mas claro.
+      });
+
     });
 }
 
@@ -75,7 +122,9 @@ function createProp(req, res) {
     precio: body.precio,
     dolares: body.dolares,
     supcubierta: body.supcubierta,
-    supdescubierta: body.supdescubierta
+    supdescubierta: body.supdescubierta,
+    usuario: req.usuario._id,
+    inmobiliaria: body.inmobiliaria
   });
 
   propiedad.save((err, propiedadGuardada) => {
@@ -219,4 +268,4 @@ function deleteProp(req, res) {
   });
 }
 
-module.exports = { getProps, createProp, updateProp, pauseProp, deleteProp };
+module.exports = { getProps, getProp, createProp, updateProp, pauseProp, deleteProp };

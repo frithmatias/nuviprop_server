@@ -3,6 +3,7 @@ var app = express();
 
 var UserModel = require("../models/usuario.model");
 var PropModel = require("../models/propiedad.model");
+var InmoModel = require("../models/inmobiliaria.model");
 
 var fs = require("fs");
 var path = require("path");
@@ -12,7 +13,7 @@ function uploadImagen(req, res) {
   var id = req.params.id;
   console.log("DATA:", req.params);
   // tipos admitidos
-  var tiposValidos = ["propiedades", "usuarios"];
+  var tiposValidos = ["propiedades", "usuarios", "inmobiliarias"];
 
   if (tiposValidos.indexOf(tipo) < 0) {
     return res.status(400).json({
@@ -158,7 +159,41 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
     });
   }
 
+  if (tipo === "inmobiliarias") {
 
+    InmoModel.findById(id, (err, resInmoModel) => {
+      if (!resInmoModel) {
+        res.status(400).json({
+          ok: false,
+          mensaje: "La inmobiliaria no existe",
+          errors: {
+            message: "La inmobiliaria que intenta acutalizar NO existe."
+          }
+        });
+      }
+
+      if (resInmoModel.img == "") resInmoModel.img = "no_existe";
+
+      var pathViejo = `./uploads/inmobiliarias/${id}/${resInmoModel.img}`;
+      var pathNuevo = `./uploads/inmobiliarias/${id}/${nombreArchivo}`;
+
+      //borro imagen vieja
+      if (fs.existsSync(pathViejo)) {
+        console.log("Borrando imagen", pathViejo);
+        fs.unlinkSync(pathViejo);
+      }
+      // guardo el nombre de la imagen nueva en la bbdd
+      resInmoModel.img = nombreArchivo;
+      resInmoModel.save((err, inmoActualizada) => {
+        // console.log("Guardando imagen", pathNuevo);
+        res.status(200).json({
+          ok: true,
+          mensaje: "Imagen de la inmobiliaria actualizada correctamente",
+          inmobiliaria: inmoActualizada
+        });
+      });
+    });
+  }
 }
 
 function deleteImagen() {

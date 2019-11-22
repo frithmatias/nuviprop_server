@@ -9,7 +9,8 @@ var mdAuth = require("../middlewares/auth.middleware");
 
 // Rutas en /user
 app.get("/", PropController.getProps);
-app.post("/", mdAuth.verificaToken, PropController.createProp);
+app.get("/:id", PropController.getProp);
+app.post("/", [mdAuth.verificaToken, mdAuth.canUpdate], PropController.createProp);
 app.put('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], PropController.updateProp); //put o patch
 app.delete('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], PropController.deleteProp);
 module.exports = app;
