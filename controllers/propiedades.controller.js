@@ -124,7 +124,8 @@ function createProp(req, res) {
     supcubierta: body.supcubierta,
     supdescubierta: body.supdescubierta,
     usuario: req.usuario._id,
-    inmobiliaria: body.inmobiliaria
+    inmobiliaria: body.inmobiliaria,
+    imgs: ['no-image.jpg']
   });
 
   propiedad.save((err, propiedadGuardada) => {
@@ -155,6 +156,13 @@ function createProp(req, res) {
 function updateProp(req, res) {
   var body = req.body;
   var id = req.params.id;
+
+
+  // si vuelvo a guardar una propiedad sin fotos evito el error body.imgs.split is not a function 
+  // TODO: cambiar esto, leer los archivos dentro de la carpeta de la propiedad y armar un array 
+  body.imgs = '';
+
+
 
   // Verifico que el id existe
   PropModel.findById(id, (err, propiedad) => {

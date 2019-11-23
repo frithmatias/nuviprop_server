@@ -107,7 +107,7 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
         fs.unlinkSync(pathViejo);
       }
 
-      // guardo el nombre de la imagen nueva en la bbdd
+      // Modifico la imagen en el objeto del usuario y la guardo en la BD
       resUserModel.img = nombreArchivo;
       resUserModel.save((err, usuarioActualizado) => {
         console.log("Guardando imagen", pathNuevo);
@@ -146,6 +146,7 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
       //   console.log("Borrando imagen", pathViejo);
       //   fs.unlinkSync(pathViejo);
       // }
+
 
       resPropModel.imgs.push(nombreArchivo);
       resPropModel.save((err, propActualizada) => {

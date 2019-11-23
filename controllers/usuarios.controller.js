@@ -32,7 +32,7 @@ function getUsers(req, res) {
         });
       }
 
-      UserModel.count({}, (err, cantidad) => {
+      UserModel.countDocuments({}, (err, cantidad) => {
         res.status(200).json({
           ok: true,
           mensaje: "Peticion GET de USUARIOS realizada correctamente.",
