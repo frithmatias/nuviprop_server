@@ -85,7 +85,7 @@ exports.canUpdate = function (req, res, next) {
       mensaje: "Token Incorrecto - el role no es ADMIN_ROLE",
       errors: {
         message:
-          "No puede ejecutar la accion solicitada, no posee permisos de administrador."
+          "No puede ejecutar la accion solicitada, no posee permisos."
       }
     });
   }
