@@ -2,13 +2,13 @@
 var UserModel = require("../models/usuario.model");
 
 // JWT y Passwords
+var SEED = require("../config/config").SEED;
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
-var SEED = require("../config/config").SEED;
 
 // Google Login
 var GOOGLE_CLIENT_ID = require("../config/config").GOOGLE_CLIENT_ID;
-// Las llaves en {OAuth2Client} es una simple destructuración para extraer el paquete 'google-auth-library' 
+// Las llaves en {OAuth2Client} es una simple destructuración para extraer el paquete 'google-auth-library'
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
@@ -34,7 +34,7 @@ function updateToken(req, res) {
 // Autenticación Google
 // ==================================================
 async function verify(token) {
-  console.log('Verificando desde VERIFY:', token);
+  console.log("Verificando desde VERIFY:", token);
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: GOOGLE_CLIENT_ID // Specify the GOOGLE_CLIENT_ID of the app that accesses the backend
@@ -69,12 +69,12 @@ async function loginGoogle(req, res) {
       });
     });
 
-  console.log('googleUser: ', googleUser);
+  console.log("googleUser: ", googleUser);
 
   if (!googleUser) {
     return res.status(500).json({
       ok: false,
-      message: 'No se pudo obtener el usuario de Google.'
+      message: "No se pudo obtener el usuario de Google."
     });
   }
 
@@ -106,6 +106,7 @@ async function loginGoogle(req, res) {
           error: err
         });
       } else {
+
         console.log(
           "Fue ingresado por autenticación de GOOGLE, hay que generar un nuevo TOKEN..."
         );
@@ -166,11 +167,6 @@ async function loginGoogle(req, res) {
   // });
 }
 
-// ==================================================
-// Autenticación Normal
-// ==================================================
-
-// app.post('/', (req, res) => {
 function login(req, res) {
   var body = req.body;
   console.log(body);
@@ -226,30 +222,30 @@ function login(req, res) {
 function obtenerMenu(ROLE) {
   var menu = [
     {
-      titulo: "Principal",
+      titulo: "Menu",
       icono: "mdi mdi-gauge",
       submenu: [
-        { titulo: "Dashboard", url: "/dashboard" },
-        { titulo: "ProgressBar", url: "/progress" },
-        { titulo: "Gráficas", url: "/graficas1" },
-        { titulo: "Promesas", url: "/promesas" },
-        { titulo: "RXJS", url: "/rxjs" }
-      ]
-    },
-    {
-      titulo: "Mantenimiento",
-      icono: "mdi mdi-folder-lock-open",
-      submenu: [
-        //  { titulo: 'Usuarios', url: '/usuarios' },
-        { titulo: "Medicos", url: "/medicos" },
-        { titulo: "Hospitales", url: "/hospitales" }
+        { titulo: "Inicio", url: "/inicio" },
+        { titulo: "Buscar propiedades", url: "/filtrosaplicados" },
+        { titulo: "Filtros", url: "/filtros" },
+        { titulo: "Emprendimientos", url: "/emprendimientos" },
+        { titulo: "Tasaciones", url: "/tasaciones" },
+        { titulo: "Nosotros", url: "/nosotros" },
+        { titulo: "Contacto", url: "/tasaciones" }
       ]
     }
   ];
 
-  console.log(ROLE);
   if (ROLE === "ADMIN_ROLE") {
-    menu[1].submenu.unshift({ titulo: "Usuarios", url: "/usuarios" }); // unshift lo coloca al princio del array, push lo coloca al final.
+    menu.push({
+      titulo: "Administracion",
+      icono: "mdi mdi-folder-lock-open",
+      submenu: [
+        { titulo: "Usuarios", url: "/usuarios" },
+        { titulo: "Propiedades", url: "/propiedades" },
+        { titulo: "Inmobiliarias", url: "/inmobiliarias" }
+      ]
+    }); // unshift lo coloca al princio del array, push lo coloca al final.
   }
   return menu;
 }

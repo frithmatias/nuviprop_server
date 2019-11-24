@@ -66,7 +66,9 @@ exports.canUpdate = function (req, res, next) {
 
   var user_request = req.usuario;
   var user_to_update = req.params.id; // -> app.put('/:id',
-
+  // este metodo en el middle verifica que se un admin para permitirle hacer actualizaciones o inserciones 
+  // determinadas en los routes. Pero que pasa si un usuario que es ROLE_USER quiere cambiarse a si mismo?
+  // para eso verifico que el usuario a actualizar sea el mismo que el usuario del request.
   if (
     user_request.role === "ADMIN_ROLE" ||
     user_request._id === user_to_update
