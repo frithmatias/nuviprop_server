@@ -18,7 +18,17 @@ const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 function updateToken(req, res) {
   // app.get('/renuevatoken', mdAuth.verificaToken, (req, res) => {
 
+  // usuario es "inyectado" en el req en el middleware para obtener req.usuario
   // tengo que generar un NUEVO TOKEN a partir de el usuario de la respuesta
+
+  // Cuando hay que renovar el token? Cuando el token expira? NO, cuando el token expira 
+  // ya no sirve y tiene que volver a loguear. El token debe renovarse cuando ESTA PROXIMO 
+  // a expirar, el tiempo lo determinamos nosotros.
+
+  // Vamos a trabajar creando un GUARD 
+  // ng g g services/guards/verificaToken --spec=false
+  // Este GUARD se debería ejecutar en TODAS las páginas. Pero vamos a usarlo en dashboard.
+
   var token = jwt.sign({ usuario: req.usuario }, SEED, { expiresIn: 14400 }); // Expira en 4 Horas.
 
   res.status(200).json({
