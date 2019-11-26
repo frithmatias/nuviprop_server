@@ -186,6 +186,7 @@ function updateProp(req, res) {
       });
     }
 
+    console.log(body);
     // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el propiedad.
     propiedad.zonificacion = body.zonificacion;
     propiedad.pais = body.pais;
@@ -215,8 +216,8 @@ function updateProp(req, res) {
     propiedad.dolares = body.dolares;
     propiedad.supcubierta = body.supcubierta;
     propiedad.supdescubierta = body.supdescubierta;
-    propiedad.imgs = body.imgs.split(",");
-
+    //propiedad.imgs = body.imgs.split(",");
+    propiedad.inmobiliaria = body.inmobiliaria;
     propiedad.save((err, propiedadGuardada) => {
       if (err) {
         return res.status(400).json({

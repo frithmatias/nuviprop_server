@@ -229,19 +229,18 @@ function login(req, res) {
   });
 }
 
+
 function obtenerMenu(ROLE) {
   var menu = [
     {
-      titulo: "Menu",
-      icono: "mdi mdi-gauge",
+      titulo: "Usuario",
+      icono: "mdi mdi-account-circle",
       submenu: [
-        { titulo: "Inicio", url: "/inicio" },
-        { titulo: "Buscar propiedades", url: "/filtrosaplicados" },
-        { titulo: "Filtros", url: "/filtros" },
-        { titulo: "Emprendimientos", url: "/emprendimientos" },
-        { titulo: "Tasaciones", url: "/tasaciones" },
-        { titulo: "Nosotros", url: "/nosotros" },
-        { titulo: "Contacto", url: "/tasaciones" }
+        { titulo: "Perfil", url: "/filtrosaplicados" },
+        { titulo: "Favoritos", url: "/favoritos" },
+        { titulo: "Alertas", url: "/alertas" },
+        { titulo: "Tasaciones", url: "/mistasaciones" },
+        { titulo: "Configuracion", url: "/account-settings" },
       ]
     }
   ];
@@ -249,7 +248,7 @@ function obtenerMenu(ROLE) {
   if (ROLE === "ADMIN_ROLE") {
     menu.push({
       titulo: "Administracion",
-      icono: "mdi mdi-folder-lock-open",
+      icono: "mdi mdi-account-key",
       submenu: [
         { titulo: "Usuarios", url: "/usuarios" },
         { titulo: "Propiedades", url: "/propiedades" },
