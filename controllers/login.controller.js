@@ -248,7 +248,7 @@ function obtenerMenu(ROLE) {
   if (ROLE === "ADMIN_ROLE") {
     menu.push({
       titulo: "Administracion",
-      icono: "mdi mdi-account-key",
+      icono: "mdi mdi-settings",
       submenu: [
         { titulo: "Usuarios", url: "/usuarios" },
         { titulo: "Propiedades", url: "/propiedades" },

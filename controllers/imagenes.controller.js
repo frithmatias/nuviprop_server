@@ -4,7 +4,7 @@ const fs = require('fs'); // para verificar si la imagen existe
 // Rutas
 //app.get('/:tipo/:img', (req, res, next) => {
 function getImage(req, res) {
-    console.log(req.params);
+    // console.log(req.params);
     var tipo = req.params.tipo;
     var id = req.params.id;
     var img = req.params.img;

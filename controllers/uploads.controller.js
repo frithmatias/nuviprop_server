@@ -9,7 +9,7 @@ var fs = require("fs");
 var path = require("path");
 
 function uploadImagen(req, res) {
-  var tipo = req.params.tipo; //si es hospital, medico o usuario
+  var tipo = req.params.tipo;
   var id = req.params.id;
   console.log("DATA:", req.params);
   // tipos admitidos
@@ -122,9 +122,10 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
   }
 
   if (tipo === "propiedades") {
+    console.log('buscando con id ', id)
     PropModel.findById(id, (err, resPropModel) => {
       if (!resPropModel) {
-        res.status(400).json({
+        return res.status(400).json({
           ok: false,
           mensaje: "La propiedad no existe",
           errors: {
@@ -147,6 +148,10 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
       //   fs.unlinkSync(pathViejo);
       // }
 
+      // console.log('resPropModel', resPropModel);
+      if (typeof resPropModel.imgs === 'undefined') {
+        resPropModel.imgs = [];
+      }
 
       resPropModel.imgs.push(nombreArchivo);
       resPropModel.save((err, propActualizada) => {
@@ -197,9 +202,65 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
   }
 }
 
-function deleteImagen() {
+function deleteImagen(req, res) {
   // TODO: Implementar borrar una imagen en las propiedad, tengo que quitar un item con el
   // id que me viene como parametro que es el nombre de la foto y quitarlo del array.
+  var tipo = req.params.tipo;
+  var id = req.params.id;
+  var filename = req.params.filename;
+
+
+
+  var path = `./uploads/${tipo}/${id}/${filename}`;
+
+  if (tipo === "propiedades") {
+
+    // ELIMINO EL ARCHIVO DE LA IMAGEN EN UPLOADS 
+    if (fs.existsSync(path)) {
+      console.log("Borrando archivo: ", path);
+      fs.unlinkSync(path);
+    }
+
+    // ELIMINO LA IMAGEN DE LA BASE DE DATOS
+    PropModel.findById(id, (err, resPropModel) => {
+
+      if (!resPropModel) {
+        res.status(400).json({
+          ok: false,
+          mensaje: "La propiedad no existe",
+          errors: {
+            message: "La propiedad que intenta acutalizar NO existe."
+          }
+        });
+      }
+
+
+      if (filename === 'todas') {
+        resPropModel.imgs = [];
+      } else {
+        resPropModel.imgs = resPropModel.imgs.filter(archivo => {
+          return archivo != filename;
+        });
+      }
+
+      // vuelvo a guardar el objeto sin ese archivo
+      resPropModel.save((err, propActualizada) => {
+        // console.log("Guardando imagen", pathNuevo);
+        res.status(200).json({
+          ok: true,
+          mensaje: "Se elimino de la BD la imagen: " + filename,
+          propiedad: propActualizada
+        });
+      });
+
+
+
+
+    });
+  }
+
+
+
 }
 
 function crearCarpeta(tipo, id) {
@@ -213,4 +274,4 @@ function crearCarpeta(tipo, id) {
   // return pathUserTemp;
 }
 
-module.exports = { uploadImagen };
+module.exports = { uploadImagen, deleteImagen };

@@ -88,6 +88,7 @@ var inmobiliariasRoutes = require("./routes/inmobiliarias.routes");
 var busquedaRoutes = require('./routes/buscar.routes');
 var uploadsRoutes = require("./routes/uploads.routes");
 var imagenesRoutes = require("./routes/imagenes.routes");
+var formsRoutes = require("./routes/forms.routes");
 // var appRoutes = require('./routes/app');
 
 // ==================================================
@@ -100,6 +101,7 @@ app.use("/inmobiliarias", inmobiliariasRoutes);
 app.use('/buscar', busquedaRoutes);
 app.use("/uploads", uploadsRoutes);
 app.use("/imagenes", imagenesRoutes);
+app.use("/form", formsRoutes);
 // app.use('/', appRoutes);
 
 // ==================================================

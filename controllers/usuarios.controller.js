@@ -60,7 +60,7 @@ function createUser(req, res) {
     img: body.img,
     role: body.role
   });
-
+  console.log('lado servidor', usuario);
   usuario.save((err, usuarioGuardado) => {
     if (err) {
       return res.status(400).json({

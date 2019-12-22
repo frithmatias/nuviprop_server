@@ -1,0 +1,174 @@
+
+----------------------------------
+A. HOJA 1 - TIPO DE PROPIEDAD 
+----------------------------------
+
+1. TIPO DE INMBUEBLE 
+    Departamento 
+    Departamento tipo casa 
+    Casa 
+    Quinta 
+    Cochera 
+    Local 
+    Hotel 
+    Terreno 
+    Oficina 
+    Campo 
+    Fondo de Comercio 
+    Galpón 
+    Negocio especial 
+
+2. TIPO DE UNIDAD (según opion ingresada en 1.)
+Opcion Departamento 
+    Departamento 
+    Piso 
+    Semipiso 
+    Dúplex 
+    Triplex 
+    Loft 
+    Pent-house 
+    PH 
+
+Opcion Casa 
+    Casa 
+    Chalet 
+    Dúplex 
+    Triplex 
+    Casa Quinta 
+    Cabaña 
+    Departamento 
+
+3.TIPO DE OPERACION 
+Venta 
+Alquiler 
+Alquiler por temporada 
+Tiempo compartido 
+
+4. TITULO DEL AVISO 
+5. DESCRIPCION 
+6. PRECIO 
+    A. $/u$D (select option)
+    B. No publicar precio en internet (checkbox)
+    C. Apto Crédito (checkbox)
+7. PAIS 
+8. PROVINCIA    -> CAPITAL FEDERAL 
+9. PARTIDO      -> CAPITAL FEDERAL 
+10. LOCALIDAD   -> CAPITAL FEDERAL
+11. BARRIO      -> FLORESTA
+12. SUB BARRIO  -> MONTE CASTRO 
+13. CALLE 
+14. ALTURA 
+15. PISO 
+16. DEPTO 
+17. CP 
+18. FOTOS 
+19. VIDEO DE YOUTUBE [AGREGAR]
+20. A. FOTO 360 / VIDEO 360 / TOUR VIRTUAL (SELECT) 
+    B. URL A AGREGAR DE MULTIMEDIA [AGREGAR]
+
+----------------------------------
+HOJA 2 - DATOS DEL AVISO 
+----------------------------------
+
+1. Superficie total 
+2. Superficie construible 
+3. Zonificacion 
+4. Longitud del fondo 
+5. Longitud del Frente 
+6. Tipo de Terreno 
+        Terreno
+        Loteo 
+        Fraccion 
+7. Factor ocupacional total (FOT)
+8. Factor ocupacional del suelo (FOS)
+9. Tipo de pendiente 
+        Plana 
+        Moderada 
+        Empinada 
+        Muy empinada 
+10. Tipo de Vista 
+        Vista a mar 
+        Vista a lago 
+        Vista a rio 
+        Vista a montaña 
+        Vista a bosque 
+        Vista a golf 
+        Vista a ciudad 
+11. Tipo de Costa 
+        Costa a mar 
+        Costa a lago 
+        Costa a rio 
+12. Estado 
+        Excelente 
+        Muy Bueno 
+        Bueno 
+        Regular 
+        A refaccionar 
+13. Propiedad ocupada (check)
+14. Fondo irregular (check)
+14. Frente irregular (check)
+15. Demolicion (check)
+16. Lateral izquierdo irregular (check)
+17. Lateral derecho irregular (check)
+18. Instalaciones del terreno (checks)
+        Agua cloaca 
+        Agua corriente 
+        agua de pozo 
+        alambrados 
+        arboleda 
+        babedero 
+        bretes 
+        corral 
+        electricidad 
+        estacada 
+        forestacion 
+        fosas 
+        haras 
+        luz electrica 
+        mangas 
+        molino 
+        potrero 
+        tambo 
+        vivienda 
+19. Servicios del terreno 
+        abl 
+        agua corriente 
+        electricidad 
+        gas envasado 
+        gas natural 
+        rentas 
+        telefono 
+
+----------------------------------
+3. HOJA 3 - TIPO DE AVISO 
+----------------------------------
+
+Selecciona el pricing 
+    PLATINUM    3690+imp  
+    GOLD        2460+imp
+    SILVER      1230+imp
+
+
+----------------------------------
+3. HOJA 4 - CONFIRMACION 
+----------------------------------
+Confirmación
+
+Información de aviso
+
+Tipo de Propiedad:      Terreno
+Tipo de operación:      Venta
+Titulo:                 PBA
+Ubicación:              Argentina, Capital Federal, Capital Federal, Floresta
+Precio:                 $ 490.000
+
+Datos de Contacto
+
+Nombre: *                       Matias
+Apellido: *                     Frith
+Email *                         asdfasdf@asdfsdf.com
+Teléfono: *                     234234324
+Teléfono Alternativo:           24234324
+Celular                         2423432423434
+WhatsApp                        541164646464
+Dias y horario de atención: *   asdfas 23423

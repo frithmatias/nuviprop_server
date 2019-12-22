@@ -1,22 +1,21 @@
 var PropModel = require("../models/propiedad.model");
+var DetailModel = require("../models/detalles.model");
 
 // http://localhost:3000/propiedad
 
-// ==================================================
-// Obtener todos los propiedads
-// ==================================================
 function getProps(req, res) {
   // desde es una variable que utilizo para decile desde donde empiece a traer registros,
   // y desde ahí me traiga los siguientes 5 registros.
   // http://localhost:3000/propiedad?desde=10
-  var desde = req.query.desde || 0;
-  desde = Number(desde);
+  var pagina = req.query.pagina || 0;
+  pagina = Number(pagina);
+  var desde = pagina * 20;
 
   //Propiedad.find({a, 'nombre email img role')
   PropModel.find({})
     .skip(desde)
-    .limit(5)
-    .exec((err, propiedads) => {
+    .limit(20)
+    .exec((err, propiedades) => {
       // el segundo argumento es un callback (err, propiedads) =>
 
       if (err) {
@@ -32,7 +31,7 @@ function getProps(req, res) {
         res.status(200).json({
           ok: true,
           mensaje: "Peticion GET de PROPIEDADES realizada correctamente.",
-          propiedads: propiedads,
+          propiedades: propiedades,
           total: cantidad
           // En standar ES6 no haría falta definir propiedads: propiedads porque es como redundante,
           // pero lo vamos a dejar así para que sea mas claro.
@@ -41,21 +40,18 @@ function getProps(req, res) {
     });
 }
 
-// ==================================================
-// Obtener sólo una propiedad por su id
-// ==================================================
 function getProp(req, res) {
 
   // desde es una variable que utilizo para decile desde donde empiece a traer registros,
   // y desde ahí me traiga los siguientes 5 registros.
   // http://localhost:3000/propiedad?desde=10
   var id = req.params.id || 0;
-  console.log(id);
-  console.log(req.params);
+
   //Propiedad.find({a, 'nombre email img role')
   PropModel.findById(id)
     .populate('usuario', 'nombre img email')
     .populate('inmobiliaria')
+    .populate('detalles')
     .exec((err, propiedad) => {
       // el segundo argumento es un callback (err, propiedads) =>
 
@@ -88,44 +84,33 @@ function getProp(req, res) {
     });
 }
 
-// ==================================================
-// Crear un nuevo propiedad
-// ==================================================
-
 function createProp(req, res) {
   var body = req.body;
+
   var propiedad = new PropModel({
-    zonificacion: body.zonificacion,
+    calle: body.calle,
+    altura: body.altura,
+    piso: body.piso,
+    depto: body.depto,
+    tipoinmueble: body.tipoinmueble,
+    tipounidad: body.tipounidad,
+    tipooperacion: body.tipooperacion,
+    titulo: body.titulo,
+    descripcion: body.descripcion,
+    precio: body.precio,
+    moneda: body.moneda,
+    nopublicarprecio: body.nopublicarprecio,
+    aptocredito: body.aptocredito,
     pais: body.pais,
     provincia: body.provincia,
-    ciudad: body.ciudad,
+    partido: body.partido,
+    localidad: body.localidad,
     barrio: body.barrio,
-    tipopropiedad: body.tipopropiedad,
-    calle: body.calle,
-    numero: body.numero,
-    descripcion: body.descripcion,
-    dormitorios: body.dormitorios,
-    ambientes: body.ambientes,
-    ambienteslista: body.ambienteslista,
-    serviciosbasicos: body.serviciosbasicos,
-    serviciosgenerales: body.serviciosgenerales,
-    expensas: body.expensas,
-    banios: body.banios,
-    cocheras: body.cocheras,
-    terraza: body.terraza,
-    aptocredito: body.aptocredito,
-    antiguedad: body.antiguedad,
-    techo: body.techo,
-    estado: body.estado,
-    disposicion: body.disposicion,
-    operacion: body.operacion,
-    precio: body.precio,
-    dolares: body.dolares,
-    supcubierta: body.supcubierta,
-    supdescubierta: body.supdescubierta,
+    subbarrio: body.subbarrio,
+    codigopostal: body.codigopostal,
     usuario: req.usuario._id,
     inmobiliaria: body.inmobiliaria,
-    imgs: ['no-image.jpg']
+    imgs: [],
   });
 
   propiedad.save((err, propiedadGuardada) => {
@@ -147,16 +132,10 @@ function createProp(req, res) {
   });
 }
 
-// ==================================================
-// Actualizar un propiedad
-// ==================================================
-// Debería primero, ademas de los nuevos datos, recibir el _id del propiedad a actualizar
-// localhost:3000/propiedad/5c64cae77477e92d88e6219a
-
 function updateProp(req, res) {
   var body = req.body;
-  var id = req.params.id;
 
+  var id = req.params.id;
 
   // si vuelvo a guardar una propiedad sin fotos evito el error body.imgs.split is not a function 
   // TODO: cambiar esto, leer los archivos dentro de la carpeta de la propiedad y armar un array 
@@ -188,65 +167,183 @@ function updateProp(req, res) {
 
     console.log(body);
     // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el propiedad.
-    propiedad.zonificacion = body.zonificacion;
+    propiedad.calle = body.calle;
+    propiedad.altura = body.altura;
+    propiedad.piso = body.piso;
+    propiedad.depto = body.depto;
+    propiedad.tipoinmueble = body.tipoinmueble;
+    propiedad.tipounidad = body.tipounidad;
+    propiedad.tipooperacion = body.tipooperacion;
+    propiedad.titulo = body.titulo;
+    propiedad.descripcion = body.descripcion;
+    propiedad.precio = body.precio;
+    propiedad.moneda = body.moneda;
+    propiedad.nopublicarprecio = body.nopublicarprecio;
+    propiedad.aptocredito = body.aptocredito;
     propiedad.pais = body.pais;
     propiedad.provincia = body.provincia;
-    propiedad.ciudad = body.ciudad;
+    propiedad.partido = body.partido;
+    propiedad.localidad = body.localidad;
     propiedad.barrio = body.barrio;
-    propiedad.tipopropiedad = body.tipopropiedad;
-    propiedad.calle = body.calle;
-    propiedad.numero = body.numero;
-    propiedad.descripcion = body.descripcion;
-    propiedad.dormitorios = body.dormitorios;
-    propiedad.ambientes = body.ambientes;
-    propiedad.ambienteslista = body.ambienteslista;
-    propiedad.serviciosbasicos = body.serviciosbasicos;
-    propiedad.serviciosgenerales = body.serviciosgenerales;
-    propiedad.expensas = body.expensas;
-    propiedad.banios = body.banios;
-    propiedad.cocheras = body.cocheras;
-    propiedad.terraza = body.terraza;
-    propiedad.aptocredito = body.aptocredito;
-    propiedad.antiguedad = body.antiguedad;
-    propiedad.techo = body.techo;
-    propiedad.estado = body.estado;
-    propiedad.disposicion = body.disposicion;
-    propiedad.operacion = body.operacion;
-    propiedad.precio = body.precio;
-    propiedad.dolares = body.dolares;
-    propiedad.supcubierta = body.supcubierta;
-    propiedad.supdescubierta = body.supdescubierta;
-    //propiedad.imgs = body.imgs.split(",");
-    propiedad.inmobiliaria = body.inmobiliaria;
-    propiedad.save((err, propiedadGuardada) => {
+    propiedad.subbarrio = body.subbarrio;
+    propiedad.codigopostal = body.codigopostal;
+    propiedad.usuario = req.usuario._id,
+      // propiedad.inmobiliaria = body.inmobiliaria;
+      propiedad.save((err, propiedadGuardada) => {
+        if (err) {
+          return res.status(400).json({
+            ok: false,
+            mensaje: "Error al actualizar el propiedad",
+            errors: err
+          });
+        }
+
+        // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
+        // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
+        // el callback para que no muestre la password. El proceso de guardado ya lo hizo con propiedad.save().
+
+        propiedadGuardada.password = ":)";
+
+        res.status(200).json({
+          ok: true,
+          propiedad: propiedadGuardada
+        });
+      });
+  });
+} //put o patch
+
+
+function createDetails(req, res) {
+  var body = req.body;
+  var idprop = req.params.idprop;
+
+
+
+  PropModel.findById(idprop, (err, resPropModel) => {
+
+    if (!resPropModel) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: "La propiedad no existe!",
+        errors: {
+          message: "La propiedad que intenta acutalizar NO existe."
+        }
+      });
+    }
+
+    if (resPropModel.detalles) {
+      return res.status(400).json({
+        // ERROR DE BASE DE DATOS
+        ok: false,
+        mensaje: "La propiedad para el POST ya tiene detalles relacionados!",
+        errors: err // Este objeto con los errores viene de mongoose
+      });
+    }
+
+
+    var detalles = new DetailModel({
+      terraza: body.terraza
+    });
+
+    detalles.save((err, detallesGuardados) => {
+
       if (err) {
         return res.status(400).json({
+          // ERROR DE BASE DE DATOS
           ok: false,
-          mensaje: "Error al actualizar el propiedad",
-          errors: err
+          mensaje: "Error guardando detalles",
+          errors: err // Este objeto con los errores viene de mongoose
         });
       }
 
-      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
-      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
-      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con propiedad.save().
+      resPropModel.detalles = detallesGuardados._id;
+      req.usuario.password = ';)';
 
-      propiedadGuardada.password = ":)";
-
-      res.status(200).json({
-        ok: true,
-        propiedad: propiedadGuardada
+      resPropModel.save((err, resPropActualizada) => {
+        res.status(200).json({
+          ok: true,
+          mensaje: "El id del detalle fue ingresado correctamente en el documento de la propiedad.",
+          detalles: detallesGuardados,
+          propiedad: resPropActualizada,
+          usuariotoken: req.usuario // USUARIO QUE HIZO LA SOLICITUD
+        });
       });
+
     });
   });
+}
+
+
+
+function updateDetails(req, res) {
+  var body = req.body;
+  var id = req.params.id;
+
+  PropModel.findById(id, (err, propiedad) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: "Error al buscar la propiedad",
+        errors: err
+      });
+    }
+
+    if (!propiedad) {
+      return res.status(400).json({
+        // Podría ser 400, Bad request (no encontro el propiedad)
+        ok: false,
+        mensaje: "No existe la propiedad con el id " + id,
+        errors: { message: "No existe la propiedad con el id solicitado" }
+      });
+    }
+
+    DetailModel.findById(propiedad.detalles, (err, detalles) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error al buscar los detalles",
+          errors: err
+        });
+      }
+      if (!detalles) {
+        return res.status(400).json({
+          // Podría ser 400, Bad request (no encontro el propiedad)
+          ok: false,
+          mensaje: "No existen detalles para la propiedad con el id " + id,
+          errors: { message: "No existen detalles con el id solicitado" }
+        });
+      }
+      // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el propiedad.
+      detalles.terraza = body.terraza;
+      // propiedad.inmobiliaria = body.inmobiliaria;
+      detalles.save((err, detallesGuardados) => {
+        if (err) {
+          return res.status(400).json({
+            ok: false,
+            mensaje: "Error al actualizar los detalles",
+            errors: err
+          });
+        }
+
+        res.status(200).json({
+          ok: true,
+          mensaje: 'El detalle para la propiedad solcitada fue actualizado correctamente.',
+          detalles: detallesGuardados
+        });
+      });
+    });
+  })
+
+
+
+  // Verifico que el id existe
+
 } //put o patch
 
 function pauseProp(req, res) {
   //TODO, implementar pausar una propiedad
 }
-// ==================================================
-// Borrar un propiedad
-// ==================================================
+
 function deleteProp(req, res) {
   var id = req.params.id;
 
@@ -277,4 +374,4 @@ function deleteProp(req, res) {
   });
 }
 
-module.exports = { getProps, getProp, createProp, updateProp, pauseProp, deleteProp };
+module.exports = { getProps, getProp, createProp, updateProp, pauseProp, deleteProp, createDetails, updateDetails };
