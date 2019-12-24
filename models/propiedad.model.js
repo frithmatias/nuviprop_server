@@ -26,9 +26,10 @@ var propiedadSchema = new Schema(
     subbarrio: { type: String, required: [true, "El dato subbarrio de propiedad es necesario"] },
     codigopostal: { type: String, required: [true, "El dato codigopostal de propiedad es necesario"] },
     imgs: { type: [String], required: false },
+    activo: { type: Boolean, required: [true, "El backend no definio el estado activo/inactivo del aviso"] },
 
     detalles: { type: Schema.Types.ObjectId, ref: 'Detalle', required: [false] },
-    usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: [true, "El id del usuario es un campo obligatorio"] }
+    usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: [true, "El id del usuario es un campo obligatorio"] },
     // inmobiliaria: { type: Schema.Types.ObjectId, ref: 'Inmobiliaria', required: [true, 'El id de la inmobiliaria es un campo obligatorio'] },
   },
   { collection: "propiedades" }

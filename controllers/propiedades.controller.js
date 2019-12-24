@@ -3,6 +3,33 @@ var DetailModel = require("../models/detalles.model");
 
 // http://localhost:3000/propiedad
 
+function getPropsAll(req, res) {
+  var pagina = req.query.pagina || 0;
+  pagina = Number(pagina);
+  var desde = pagina * 20;
+  PropModel.find()
+    .skip(desde)
+    .limit(20)
+    .exec((err, propiedades) => {
+      if (err) {
+        return res.status(500).json({
+          // ERROR DE BASE DE DATOS
+          ok: false,
+          mensaje: "Error cargando propiedad",
+          errors: err
+        });
+      }
+      PropModel.count({}, (err, cantidad) => {
+        res.status(200).json({
+          ok: true,
+          mensaje: "Peticion GET de PROPIEDADES realizada correctamente.",
+          propiedades: propiedades,
+          total: cantidad
+        });
+      });
+    });
+}
+
 function getProps(req, res) {
   // desde es una variable que utilizo para decile desde donde empiece a traer registros,
   // y desde ahí me traiga los siguientes 5 registros.
@@ -12,7 +39,7 @@ function getProps(req, res) {
   var desde = pagina * 20;
 
   //Propiedad.find({a, 'nombre email img role')
-  PropModel.find({})
+  PropModel.find({ activo: true })
     .skip(desde)
     .limit(20)
     .exec((err, propiedades) => {
@@ -27,7 +54,7 @@ function getProps(req, res) {
         });
       }
 
-      PropModel.count({}, (err, cantidad) => {
+      PropModel.count({ activo: true }, (err, cantidad) => {
         res.status(200).json({
           ok: true,
           mensaje: "Peticion GET de PROPIEDADES realizada correctamente.",
@@ -108,9 +135,10 @@ function createProp(req, res) {
     barrio: body.barrio,
     subbarrio: body.subbarrio,
     codigopostal: body.codigopostal,
-    usuario: req.usuario._id,
-    inmobiliaria: body.inmobiliaria,
     imgs: [],
+    activo: false,
+    usuario: req.usuario._id
+    // inmobiliaria: body.inmobiliaria,
   });
 
   propiedad.save((err, propiedadGuardada) => {
@@ -211,6 +239,7 @@ function updateProp(req, res) {
       });
   });
 } //put o patch
+
 
 
 function createDetails(req, res) {
@@ -340,6 +369,57 @@ function updateDetails(req, res) {
 
 } //put o patch
 
+function changeStatus(req, res) {
+  var body = req.body;
+  var id = req.params.id;
+
+  PropModel.findById(id, (err, propiedad) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: "Error al buscar la propiedad",
+        errors: err
+      });
+    }
+
+    if (!propiedad) {
+      return res.status(400).json({
+        // Podría ser 400, Bad request (no encontro el propiedad)
+        ok: false,
+        mensaje: "No existe la propiedad con el id " + id,
+        errors: { message: "No existe propiedad con el id solicitado" }
+      });
+    }
+
+    console.log('estado anterior ', propiedad.activo);
+    (propiedad.activo) ? propiedad.activo = false : propiedad.activo = true;
+    console.log('estado despues ', propiedad.activo);
+
+    // propiedad.activo = true;
+
+    propiedad.save((err, propiedadActivada) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Error al activar la propiedad",
+          errors: err
+        });
+      }
+
+      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
+      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
+      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con propiedad.save().
+
+      res.status(200).json({
+        ok: true,
+        mensaje: 'La propiedad se activo correctamente',
+        propiedad: propiedadActivada
+      });
+    });
+  });
+} //put o patch
+
+
 function pauseProp(req, res) {
   //TODO, implementar pausar una propiedad
 }
@@ -374,4 +454,15 @@ function deleteProp(req, res) {
   });
 }
 
-module.exports = { getProps, getProp, createProp, updateProp, pauseProp, deleteProp, createDetails, updateDetails };
+module.exports = {
+  getPropsAll,
+  getProps,
+  getProp,
+  createProp,
+  updateProp,
+  pauseProp,
+  deleteProp,
+  createDetails,
+  updateDetails,
+  changeStatus
+};
