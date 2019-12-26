@@ -4,6 +4,7 @@ var app = express();
 
 var Propiedad = require('../models/propiedad.model');
 var Usuario = require('../models/usuario.model');
+var Localidad = require('../models/localidad.model');
 
 // ==============================
 // Busqueda por colección
@@ -21,11 +22,14 @@ function buscarEnColeccion(req, res) {
     switch (coleccion) {
 
         case 'usuarios':
-            promesa = buscarUsuarios(patron, regex);
+            promesa = buscarUsuarios(regex);
             break;
 
         case 'propiedades':
-            promesa = buscarPropiedades(patron, regex);
+            promesa = buscarPropiedades(regex);
+            break;
+        case 'localidades':
+            promesa = buscarLocalidades(patron, regex);
             break;
         default:
             return res.status(400).json({
@@ -43,6 +47,11 @@ function buscarEnColeccion(req, res) {
             [coleccion]: data
         });
 
+    }).catch(err => {
+        res.status(200).json({
+            ok: false,
+            [coleccion]: err
+        });
     })
 
 }
@@ -76,7 +85,7 @@ function buscarTodasColecciones(req, res) {
 }
 
 
-function buscarPropiedades(patron, regex) {
+function buscarPropiedades(regex) {
 
     return new Promise((resolve, reject) => {
 
@@ -104,7 +113,7 @@ function buscarPropiedades(patron, regex) {
 }
 
 
-function buscarUsuarios(patron, regex) {
+function buscarUsuarios(regex) {
 
     return new Promise((resolve, reject) => {
 
@@ -126,5 +135,32 @@ function buscarUsuarios(patron, regex) {
 }
 
 
+function buscarLocalidades(patron, regex) {
 
+    return new Promise((resolve, reject) => {
+        // Con el fin de evitar sobrecargar al server con peticiones de datos duplicados, le pido al backend
+        // que me envíe resultados SOLO cuando ingreso tres caracteres, a partir de esos resultados
+        // el filtro lo hace el cliente en el frontend con los datos ya almacenados en this.options.
+        if (patron.length != 3) {
+            reject('La petición se ejecuta sólo con tres caracteres');
+        } else {
+            Localidad.find({})
+                .or([
+                    { 'properties.provincia.nombre': regex },
+                    { 'properties.departamento.nombre': regex },
+                    { 'properties.nombre': regex }
+                ])
+                .exec((err, localidadesEncontradas) => {
+
+                    if (err) {
+                        reject('Error al cargar localidades', err);
+                    } else {
+                        resolve(localidadesEncontradas);
+                    }
+                });
+        }
+
+
+    });
+}
 module.exports = { buscarEnColeccion, buscarTodasColecciones };

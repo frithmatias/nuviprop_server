@@ -89,6 +89,7 @@ var busquedaRoutes = require('./routes/buscar.routes');
 var uploadsRoutes = require("./routes/uploads.routes");
 var imagenesRoutes = require("./routes/imagenes.routes");
 var formsRoutes = require("./routes/forms.routes");
+var dataRoutes = require("./routes/data.routes");
 // var appRoutes = require('./routes/app');
 
 // ==================================================
@@ -102,6 +103,8 @@ app.use('/buscar', busquedaRoutes);
 app.use("/uploads", uploadsRoutes);
 app.use("/imagenes", imagenesRoutes);
 app.use("/form", formsRoutes);
+app.use("/data", dataRoutes);
+
 // app.use('/', appRoutes);
 
 // ==================================================

@@ -128,12 +128,10 @@ function createProp(req, res) {
     moneda: body.moneda,
     nopublicarprecio: body.nopublicarprecio,
     aptocredito: body.aptocredito,
-    pais: body.pais,
     provincia: body.provincia,
-    partido: body.partido,
+    departamento: body.departamento,
     localidad: body.localidad,
-    barrio: body.barrio,
-    subbarrio: body.subbarrio,
+    coords: body.coords,
     codigopostal: body.codigopostal,
     imgs: [],
     activo: false,
@@ -208,12 +206,10 @@ function updateProp(req, res) {
     propiedad.moneda = body.moneda;
     propiedad.nopublicarprecio = body.nopublicarprecio;
     propiedad.aptocredito = body.aptocredito;
-    propiedad.pais = body.pais;
     propiedad.provincia = body.provincia;
-    propiedad.partido = body.partido;
+    propiedad.departamento = body.departamento;
     propiedad.localidad = body.localidad;
-    propiedad.barrio = body.barrio;
-    propiedad.subbarrio = body.subbarrio;
+    propiedad.coords = body.coords;
     propiedad.codigopostal = body.codigopostal;
     propiedad.usuario = req.usuario._id,
       // propiedad.inmobiliaria = body.inmobiliaria;
@@ -391,9 +387,7 @@ function changeStatus(req, res) {
       });
     }
 
-    console.log('estado anterior ', propiedad.activo);
     (propiedad.activo) ? propiedad.activo = false : propiedad.activo = true;
-    console.log('estado despues ', propiedad.activo);
 
     // propiedad.activo = true;
 
