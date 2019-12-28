@@ -4,12 +4,49 @@ var app = express();
 
 var Propiedad = require('../models/propiedad.model');
 var Usuario = require('../models/usuario.model');
+
 var Localidad = require('../models/localidad.model');
+var TipoInmueble = require('../models/tipo_inmuebles.model');
+var TipoOperacion = require('../models/tipo_operaciones.model');
 
 // ==============================
 // Busqueda por colección
 // ==============================
 // app.get('/coleccion/:coleccion/:patron', (req, res) => {
+
+
+function buscarInicio(req, res) {
+
+    var tipooperacion = req.params.tipooperacion;
+    var tipoinmueble = req.params.tipoinmueble;
+    var localidad = req.params.localidad;
+    console.log(tipooperacion, tipoinmueble, localidad);
+
+
+    TipoOperacion.findById(tipooperacion, (err, operacion) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            })
+        }
+
+        if (!operacion) {
+            return res.status(400).json({
+                ok: false,
+                message: 'No existe operación para el id solicitado'
+            })
+        }
+
+
+
+    })
+}
+
+
+
+
+
 function buscarEnColeccion(req, res) {
 
 
@@ -163,4 +200,4 @@ function buscarLocalidades(patron, regex) {
 
     });
 }
-module.exports = { buscarEnColeccion, buscarTodasColecciones };
+module.exports = { buscarEnColeccion, buscarTodasColecciones, buscarInicio };

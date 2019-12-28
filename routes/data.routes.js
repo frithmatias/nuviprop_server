@@ -10,5 +10,5 @@ var mdAuth = require('../middlewares/auth.middleware');
 // Rutas
 app.get('/operaciones', dataController.getOperaciones);
 app.get('/inmuebles', dataController.getInmuebles);
-
+app.get('/unidades/:idparent', dataController.getUnidades);
 module.exports = app;

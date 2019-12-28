@@ -8,7 +8,7 @@ var BusquedaController = require('../controllers/buscar.controller');
 var mdAuth = require('../middlewares/auth.middleware');
 
 // Rutas
+app.get('/:tipooperacion/:tipoinmueble/:localidad', BusquedaController.buscarInicio);
 app.get('/:coleccion/:patron', BusquedaController.buscarEnColeccion);
 app.get('/:patron', BusquedaController.buscarTodasColecciones);
-
 module.exports = app;

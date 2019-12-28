@@ -1,7 +1,9 @@
 var tipoOperacion = require('../models/tipo_operaciones.model');
 var tipoInmueble = require('../models/tipo_inmuebles.model');
+var tipoUnidad = require('../models/tipo_unidades.model');
 
 function getOperaciones(req, res) {
+
 
 
     tipoOperacion.find({})
@@ -54,4 +56,32 @@ function getInmuebles(req, res) {
 
             });
 }
-module.exports = { getOperaciones, getInmuebles };
+
+
+function getUnidades(req, res) {
+    var idparent = req.params.idparent;
+
+    tipoUnidad.find({ idparent: idparent })
+        .exec(
+            (err, unidades) => {
+
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando las unidades',
+                        errors: err
+                    });
+                }
+
+                tipoUnidad.countDocuments({ idparent: idparent }, (err, conteo) => {
+
+                    res.status(200).json({
+                        ok: true,
+                        unidades: unidades,
+                        total: conteo
+                    });
+                });
+
+            });
+}
+module.exports = { getOperaciones, getInmuebles, getUnidades };
