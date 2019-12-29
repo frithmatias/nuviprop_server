@@ -231,16 +231,17 @@ function login(req, res) {
 
 
 function obtenerMenu(ROLE) {
+  // Iconos 
+  // hamburguesa menu: 'mdi mdi-menu',
+  // filtros: 'mdi mdi-tune',
+
   var menu = [
     {
       titulo: "Usuario",
       icono: "mdi mdi-account-circle",
       submenu: [
-        { titulo: "Perfil", url: "/filtrosaplicados" },
-        { titulo: "Favoritos", url: "/favoritos" },
-        { titulo: "Alertas", url: "/alertas" },
-        { titulo: "Tasaciones", url: "/mistasaciones" },
-        { titulo: "Configuracion", url: "/account-settings" },
+        { titulo: "Mis Propiedades", url: "/propiedades" },
+        { titulo: "Mis Busquedas", url: "/busquedas" },
       ]
     }
   ];
