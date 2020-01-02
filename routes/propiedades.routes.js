@@ -8,7 +8,7 @@ var PropController = require("../controllers/propiedades.controller");
 var mdAuth = require("../middlewares/auth.middleware");
 
 // Propiedades
-app.get("/", PropController.getProps);
+app.get("/", PropController.getPropsActive);
 app.get("/all", [mdAuth.verificaToken, mdAuth.canUpdate], PropController.getPropsAll);
 // Propiedad
 app.get("/:id", PropController.getProp);
@@ -19,7 +19,7 @@ app.delete('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], PropController.dele
 app.post('/detalles/:idprop', [mdAuth.verificaToken, mdAuth.canUpdate], PropController.createDetails);
 app.put('/detalles/:id', [mdAuth.verificaToken, mdAuth.canUpdate], PropController.updateDetails); //put o patch
 
-app.put('/changestatus/:id', [mdAuth.verificaToken, mdAuth.canUpdate], PropController.changeStatus); //put o patch
+app.put('/pause/:id', [mdAuth.verificaToken, mdAuth.canUpdate], PropController.pausedProp); //put o patch
 
 
 module.exports = app;

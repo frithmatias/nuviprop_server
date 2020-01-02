@@ -240,7 +240,8 @@ function obtenerMenu(ROLE) {
       titulo: "Usuario",
       icono: "mdi mdi-account-circle",
       submenu: [
-        { titulo: "Mis Propiedades", url: "/propiedades" },
+        { titulo: "Propiedades", url: "/propiedades" },
+        { titulo: "Mis Propiedades", url: "/mispropiedades" },
         { titulo: "Mis Busquedas", url: "/busquedas" },
       ]
     }
@@ -252,7 +253,6 @@ function obtenerMenu(ROLE) {
       icono: "mdi mdi-settings",
       submenu: [
         { titulo: "Usuarios", url: "/usuarios" },
-        { titulo: "Propiedades", url: "/propiedades" },
         { titulo: "Inmobiliarias", url: "/inmobiliarias" }
       ]
     }); // unshift lo coloca al princio del array, push lo coloca al final.

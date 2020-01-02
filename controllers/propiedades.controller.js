@@ -1,6 +1,10 @@
 var PropModel = require("../models/propiedad.model");
 var DetailModel = require("../models/detalles.model");
+var FileSystem = require("./filesystem.controller")
 
+
+var fs = require("fs");
+var path = require("path");
 // http://localhost:3000/propiedad
 
 function getPropsAll(req, res) {
@@ -30,7 +34,7 @@ function getPropsAll(req, res) {
     });
 }
 
-function getProps(req, res) {
+function getPropsActive(req, res) {
   // desde es una variable que utilizo para decile desde donde empiece a traer registros,
   // y desde ahí me traiga los siguientes 5 registros.
   // http://localhost:3000/propiedad?desde=10
@@ -234,9 +238,93 @@ function updateProp(req, res) {
         });
       });
   });
-} //put o patch
+}
+
+function pausedProp(req, res) {
+  var body = req.body;
+  var id = req.params.id;
+
+  PropModel.findById(id, (err, propiedad) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: "Error al buscar la propiedad",
+        errors: err
+      });
+    }
+
+    if (!propiedad) {
+      return res.status(400).json({
+        // Podría ser 400, Bad request (no encontro el propiedad)
+        ok: false,
+        mensaje: "No existe la propiedad con el id " + id,
+        errors: { message: "No existe propiedad con el id solicitado" }
+      });
+    }
+
+    (propiedad.activo) ? propiedad.activo = false : propiedad.activo = true;
+
+    // propiedad.activo = true;
+
+    propiedad.save((err, propiedadActivada) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Error al activar la propiedad",
+          errors: err
+        });
+      }
+
+      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
+      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
+      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con propiedad.save().
+      var msg = '';
+      propiedadActivada.activo ? msg = 'activo' : msg = 'desactivo';
+      res.status(200).json({
+        ok: true,
+        mensaje: 'La propiedad se ' + msg + ' correctamente',
+        propiedad: propiedadActivada
+      });
+    });
+  });
+}
+
+function deleteProp(req, res) {
+  var id = req.params.id;
+
+  PropModel.findByIdAndRemove(id, (err, propiedadBorrado) => {
+    if (err) {
+      return res.status(500).json({
+        // ERROR DE BASE DE DATOS
+        ok: false,
+        mensaje: "Error borrando propiedad",
+        errors: err // Este objeto con los errores viene de mongoose
+      });
+    }
+
+    if (!propiedadBorrado) {
+      return res.status(400).json({
+        // ERROR DE BASE DE DATOS
+        ok: false,
+        mensaje: "Error borrando propiedad, el propiedad solicitado NO existe.",
+        errors: { message: "No existe el propiedad que intenta borrar." } // Este objeto con los errores viene de mongoose
+      });
+    }
+
+    // borro la propiedad de la base de datos correctamente, ahora vamos a borrar los archivos subidos.
+    var path = `./uploads/propiedades/${id}`;
+    console.log('enviando a borrar: ', path);
+    var result = FileSystem.deleteFolder(path);
+    console.log(result);
 
 
+    res.status(200).json({
+      ok: true,
+      mensaje: "Propiedad borrada correctamente.",
+      propiedad: propiedadBorrado
+    });
+  });
+}
 
 function createDetails(req, res) {
   var body = req.body;
@@ -297,8 +385,6 @@ function createDetails(req, res) {
     });
   });
 }
-
-
 
 function updateDetails(req, res) {
   var body = req.body;
@@ -363,100 +449,18 @@ function updateDetails(req, res) {
 
   // Verifico que el id existe
 
-} //put o patch
-
-function changeStatus(req, res) {
-  var body = req.body;
-  var id = req.params.id;
-
-  PropModel.findById(id, (err, propiedad) => {
-    if (err) {
-      return res.status(500).json({
-        ok: false,
-        mensaje: "Error al buscar la propiedad",
-        errors: err
-      });
-    }
-
-    if (!propiedad) {
-      return res.status(400).json({
-        // Podría ser 400, Bad request (no encontro el propiedad)
-        ok: false,
-        mensaje: "No existe la propiedad con el id " + id,
-        errors: { message: "No existe propiedad con el id solicitado" }
-      });
-    }
-
-    (propiedad.activo) ? propiedad.activo = false : propiedad.activo = true;
-
-    // propiedad.activo = true;
-
-    propiedad.save((err, propiedadActivada) => {
-      if (err) {
-        return res.status(400).json({
-          ok: false,
-          mensaje: "Error al activar la propiedad",
-          errors: err
-        });
-      }
-
-      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
-      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
-      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con propiedad.save().
-
-      res.status(200).json({
-        ok: true,
-        mensaje: 'La propiedad se activo correctamente',
-        propiedad: propiedadActivada
-      });
-    });
-  });
-} //put o patch
-
-
-function pauseProp(req, res) {
-  //TODO, implementar pausar una propiedad
 }
 
-function deleteProp(req, res) {
-  var id = req.params.id;
 
-  PropModel.findByIdAndRemove(id, (err, propiedadBorrado) => {
-    if (err) {
-      return res.status(500).json({
-        // ERROR DE BASE DE DATOS
-        ok: false,
-        mensaje: "Error borrando propiedad",
-        errors: err // Este objeto con los errores viene de mongoose
-      });
-    }
-
-    if (!propiedadBorrado) {
-      return res.status(400).json({
-        // ERROR DE BASE DE DATOS
-        ok: false,
-        mensaje: "Error borrando propiedad, el propiedad solicitado NO existe.",
-        errors: { message: "No existe el propiedad que intenta borrar." } // Este objeto con los errores viene de mongoose
-      });
-    }
-
-    res.status(200).json({
-      ok: true,
-      mensaje: "Propiedad borrada correctamente.",
-      propiedad: propiedadBorrado
-    });
-  });
-}
 
 module.exports = {
   getPropsAll,
-  getProps,
+  getPropsActive,
   getProp,
   createProp,
   updateProp,
-  pauseProp,
   deleteProp,
+  pausedProp,
   createDetails,
-  updateDetails,
-  changeStatus
+  updateDetails
 };

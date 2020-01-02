@@ -1,6 +1,6 @@
 var express = require("express");
 var app = express();
-
+var fileSystem = require("./filesystem.controller");
 var UserModel = require("../models/usuario.model");
 var PropModel = require("../models/propiedad.model");
 var InmoModel = require("../models/inmobiliaria.model");
@@ -58,7 +58,12 @@ function uploadImagen(req, res) {
     });
   }
   // si no existe la carpeta ej. /uploads/propiedades/RtY78GhF24uItRe87ui, la crea
-  crearCarpeta(tipo, id);
+  // crearCarpeta(tipo, id);
+  var path = `./uploads/${tipo}/${id}`;
+  console.log('enviando a crear: ', path);
+  var result = fileSystem.createFolder(path);
+  console.log(result);
+
 
   var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`; // Uso los backticks para hacer un template literal
   var path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
@@ -211,15 +216,11 @@ function deleteImagen(req, res) {
 
 
 
-  var path = `./uploads/${tipo}/${id}/${filename}`;
+
 
   if (tipo === "propiedades") {
 
-    // ELIMINO EL ARCHIVO DE LA IMAGEN EN UPLOADS 
-    if (fs.existsSync(path)) {
-      console.log("Borrando archivo: ", path);
-      fs.unlinkSync(path);
-    }
+
 
     // ELIMINO LA IMAGEN DE LA BASE DE DATOS
     PropModel.findById(id, (err, resPropModel) => {
@@ -236,8 +237,23 @@ function deleteImagen(req, res) {
 
 
       if (filename === 'todas') {
+
+        // BORRAR TODAS LAS IMAGENES
+        // ELIMINO TODA LA CARPETA
+        var dirPath = `./uploads/${tipo}/${id}`;
+        fileSystem.deleteFolder(dirPath)
+        // ELIMINO EL ARRAY DE LA BD    
         resPropModel.imgs = [];
+
       } else {
+
+        // BORRAR SOLO UNA IMAGEN 
+        var filePath = `./uploads/${tipo}/${id}/${filename}`;
+        // ELIMINO EL ARCHIVO FISICO DE LA CARPETA
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+        // ELIMINO LA IMAGEN DEL ARRAY EN LA BD
         resPropModel.imgs = resPropModel.imgs.filter(archivo => {
           return archivo != filename;
         });
@@ -263,15 +279,5 @@ function deleteImagen(req, res) {
 
 }
 
-function crearCarpeta(tipo, id) {
-  // ./uploads/propiedad
-  // ./uploads/usuario
-  var pathUser = path.resolve(__dirname, "../uploads", tipo, id);
-  var existe = fs.existsSync(pathUser);
-  if (!existe) {
-    fs.mkdirSync(pathUser);
-  }
-  // return pathUserTemp;
-}
 
 module.exports = { uploadImagen, deleteImagen };
