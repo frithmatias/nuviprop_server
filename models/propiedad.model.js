@@ -11,14 +11,17 @@ var propiedadSchema = new Schema(
     depto: { type: String, required: false },
     tipoinmueble: {
       nombre: { type: String, required: [true, "El dato nombre del tipoinmueble es necesario"] },
-      _id: { type: String, required: [true, "El dato id del tipoinmueble es necesario"] },
+      id: { type: String, required: [true, "El dato id del tipoinmueble es necesario"] },
+      _id: { type: String, required: [true, "El dato _id del tipoinmueble es necesario"] },
     },
     tipounidad: {
       nombre: { type: String, required: false },
+      id: { type: String, required: false },
       _id: { type: String, required: false },
     }, tipooperacion: {
       nombre: { type: String, required: [true, "El dato nombre del tipooperacion es necesario"] },
-      _id: { type: String, required: [true, "El dato id del tipooperacion es necesario"] },
+      id: { type: String, required: [true, "El dato id del tipooperacion es necesario"] },
+      _id: { type: String, required: [true, "El dato _id del tipooperacion es necesario"] },
     },
     titulo: { type: String, required: [true, "El dato titulo es necesario"] },
     descripcion: { type: String, required: [true, "El dato descripcion de propiedad es necesario"] },

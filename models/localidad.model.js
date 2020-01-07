@@ -3,10 +3,34 @@ var Schema = mongoose.Schema;
 
 var localidadSchema = new Schema(
     {
-        provincia: { type: String, required: [true, "El dato provincia de propiedad es necesario"] },
-        departamento: { type: String, required: [true, "El dato departamento de propiedad es necesario"] },
-        localidad: { type: String, required: [true, "El dato localidad de propiedad es necesario"] },
-        coords: [{ type: String, required: [true, "El dato coords de propiedad es necesario"] }],
+        properties: {
+            categoria: { type: String, required: false },
+            fuente: { type: String, required: false },
+            nombre: { type: String, required: false },
+            id: { type: String, required: false },
+            municipio: {
+                nombre: { type: String, required: false },
+                id: { type: String, required: false }
+            },
+            departamento: {
+                nombre: { type: String, required: false },
+                id: { type: String, required: false }
+            },
+            provincia: {
+                nombre: { type: String, required: false },
+                id: { type: String, required: false },
+            },
+            localidad_censal: {
+                nombre: { type: String, required: false },
+                id: { type: String, required: false },
+            },
+            type: { type: String, required: false }
+
+        },
+        type: { type: String, required: false },
+        geometry: {
+            coordinates: { type: [String], required: false },
+        }
     },
     { collection: "localidades" }
 );

@@ -11,7 +11,8 @@ var mdAuth = require('../middlewares/auth.middleware');
 app.get('/operaciones', inicioController.getOperaciones);
 app.get('/inmuebles', inicioController.getInmuebles);
 app.get('/provincias', inicioController.getProvincias);
+app.get('/localidadesendepartamento/:idlocalidad', inicioController.getLocalidaesEnDepartamento);
 
 app.get('/unidades/:idparent', inicioController.getUnidades);
-app.get('/propiedades/:operacion/:inmueble/:localidad/:pagina', inicioController.getPropsCriteria);
+app.get('/propiedades/:operacion?/:inmueble?/:localidad/:pagina', inicioController.getPropsCriteria);
 module.exports = app;
