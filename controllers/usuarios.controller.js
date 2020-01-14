@@ -80,6 +80,68 @@ function createUser(req, res) {
   });
 }
 
+function addFavourite(req, res) {
+
+  var body = req.body;
+  var id = req.params.userid;
+
+
+  // Verifico que el id existe
+  UserModel.findById(id, (err, usuario) => {
+    if (err) {
+      // Un findById no debería retorar NINGUN error, si no lo encuentra, retorna un usuario vacío
+      // por lo tanto, si encuentra un error lo configuro como un error 500 'Internal Server Error'
+      return res.status(500).json({
+        // ERROR DE BASE DE DATOS
+        ok: false,
+        mensaje: "Error al buscar un usuario",
+        errors: err
+      });
+    }
+
+    if (!usuario) {
+      return res.status(400).json({
+        // Podría ser 400, Bad request (no encontro el usuario)
+        ok: false,
+        mensaje: "No existe un usuario con el id " + id,
+        errors: { message: "No existe usuario con el id solicitado" }
+      });
+    }
+    console.log('IDAVISO ', body.avisoid);
+    // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el usuario.
+    if (usuario.favoritos.includes(body.avisoid)) {
+      // si existe la borra
+      usuario.favoritos = usuario.favoritos.filter(favorito => {
+        return favorito != body.avisoid;
+      });
+    } else {
+      // si no existe la crea
+      usuario.favoritos.push(body.avisoid);
+    }
+
+    usuario.save((err, usuarioGuardado) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Error al actualizar el usuario",
+          errors: err
+        });
+      }
+
+      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
+      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
+      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con usuario.save().
+
+      usuarioGuardado.password = ":)";
+
+      res.status(200).json({
+        ok: true,
+        usuario: usuarioGuardado
+      });
+    });
+  });
+
+}
 // ==================================================
 // Actualizar un usuario
 // ==================================================
@@ -174,4 +236,4 @@ function deleteUser(req, res) {
   });
 }
 
-module.exports = { getUsers, createUser, updateUser, deleteUser };
+module.exports = { getUsers, createUser, updateUser, deleteUser, addFavourite };

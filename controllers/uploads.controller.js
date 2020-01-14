@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var fileSystem = require("./filesystem.controller");
 var UserModel = require("../models/usuario.model");
-var PropModel = require("../models/propiedad.model");
+var AvisoModel = require("../models/aviso.model");
 var InmoModel = require("../models/inmobiliaria.model");
 
 var fs = require("fs");
@@ -13,7 +13,7 @@ function uploadImagen(req, res) {
   var id = req.params.id;
   console.log("DATA:", req.params);
   // tipos admitidos
-  var tiposValidos = ["propiedades", "usuarios", "inmobiliarias"];
+  var tiposValidos = ["avisos", "usuarios", "inmobiliarias"];
 
   if (tiposValidos.indexOf(tipo) < 0) {
     return res.status(400).json({
@@ -21,7 +21,7 @@ function uploadImagen(req, res) {
       ok: false,
       mensaje: "Error, tipo de coleccion no valida.",
       errors: {
-        message: "Las colecciones validas solo son " + tiposValidos.join(", ")
+        message: "Els colecciones validas solo son " + tiposValidos.join(", ")
       }
     });
   }
@@ -57,7 +57,7 @@ function uploadImagen(req, res) {
       }
     });
   }
-  // si no existe la carpeta ej. /uploads/propiedades/RtY78GhF24uItRe87ui, la crea
+  // si no existe la carpeta ej. /uploads/avisos/RtY78GhF24uItRe87ui, la crea
   // crearCarpeta(tipo, id);
   var path = `./uploads/${tipo}/${id}`;
   console.log('enviando a crear: ', path);
@@ -126,24 +126,24 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
     });
   }
 
-  if (tipo === "propiedades") {
+  if (tipo === "avisos") {
     console.log('buscando con id ', id)
-    PropModel.findById(id, (err, resPropModel) => {
-      if (!resPropModel) {
+    AvisoModel.findById(id, (err, resAvisoModel) => {
+      if (!resAvisoModel) {
         return res.status(400).json({
           ok: false,
-          mensaje: "La propiedad no existe",
+          mensaje: "El aviso no existe",
           errors: {
-            message: "La propiedad que intenta acutalizar NO existe."
+            message: "El aviso que intenta acutalizar NO existe."
           }
         });
       }
 
       // en usuario tengo el valor IMG donde se almacena la foto del usuario
-      // en propiedad, puedo tener muchas fotos, pero NO necesito borrarlas
+      // en aviso, puedo tener muchas fotos, pero NO necesito borrarlas
       // al subir una nueva no tengo que borrar las anteriores, puedo comentar
       // las lineas para borrar la imagen anterior.
-      // var pathViejo = `./uploads/usuario/${id}/${resPropModel.img}`;
+      // var pathViejo = `./uploads/usuario/${id}/${resAvisoModel.img}`;
       // var pathNuevo = `./uploads/usuario/${id}/${nombreArchivo}`;
 
       // Si ya existe una imagen subida por ese usuario, la borra.
@@ -153,18 +153,18 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
       //   fs.unlinkSync(pathViejo);
       // }
 
-      // console.log('resPropModel', resPropModel);
-      if (typeof resPropModel.imgs === 'undefined') {
-        resPropModel.imgs = [];
+      // console.log('resAvisoModel', resAvisoModel);
+      if (typeof resAvisoModel.imgs === 'undefined') {
+        resAvisoModel.imgs = [];
       }
 
-      resPropModel.imgs.push(nombreArchivo);
-      resPropModel.save((err, propActualizada) => {
+      resAvisoModel.imgs.push(nombreArchivo);
+      resAvisoModel.save((err, avisoActualizado) => {
         // console.log("Guardando imagen", pathNuevo);
         res.status(200).json({
           ok: true,
           mensaje: "Imagenes de la prpiedad actualizadas correctamente",
-          propiedad: propActualizada
+          aviso: avisoActualizado
         });
       });
     });
@@ -176,9 +176,9 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
       if (!resInmoModel) {
         res.status(400).json({
           ok: false,
-          mensaje: "La inmobiliaria no existe",
+          mensaje: "El inmobiliaria no existe",
           errors: {
-            message: "La inmobiliaria que intenta acutalizar NO existe."
+            message: "El inmobiliaria que intenta acutalizar NO existe."
           }
         });
       }
@@ -208,7 +208,7 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
 }
 
 function deleteImagen(req, res) {
-  // TODO: Implementar borrar una imagen en las propiedad, tengo que quitar un item con el
+  // TODO: Implementar borrar una imagen en las aviso, tengo que quitar un item con el
   // id que me viene como parametro que es el nombre de la foto y quitarlo del array.
   var tipo = req.params.tipo;
   var id = req.params.id;
@@ -218,19 +218,19 @@ function deleteImagen(req, res) {
 
 
 
-  if (tipo === "propiedades") {
+  if (tipo === "avisos") {
 
 
 
     // ELIMINO LA IMAGEN DE LA BASE DE DATOS
-    PropModel.findById(id, (err, resPropModel) => {
+    AvisoModel.findById(id, (err, resAvisoModel) => {
 
-      if (!resPropModel) {
+      if (!resAvisoModel) {
         res.status(400).json({
           ok: false,
-          mensaje: "La propiedad no existe",
+          mensaje: "El aviso no existe",
           errors: {
-            message: "La propiedad que intenta acutalizar NO existe."
+            message: "El aviso que intenta acutalizar NO existe."
           }
         });
       }
@@ -243,7 +243,7 @@ function deleteImagen(req, res) {
         var dirPath = `./uploads/${tipo}/${id}`;
         fileSystem.deleteFolder(dirPath)
         // ELIMINO EL ARRAY DE LA BD    
-        resPropModel.imgs = [];
+        resAvisoModel.imgs = [];
 
       } else {
 
@@ -254,18 +254,18 @@ function deleteImagen(req, res) {
           fs.unlinkSync(filePath);
         }
         // ELIMINO LA IMAGEN DEL ARRAY EN LA BD
-        resPropModel.imgs = resPropModel.imgs.filter(archivo => {
+        resAvisoModel.imgs = resAvisoModel.imgs.filter(archivo => {
           return archivo != filename;
         });
       }
 
       // vuelvo a guardar el objeto sin ese archivo
-      resPropModel.save((err, propActualizada) => {
+      resAvisoModel.save((err, avisoActualizado) => {
         // console.log("Guardando imagen", pathNuevo);
         res.status(200).json({
           ok: true,
           mensaje: "Se elimino de la BD la imagen: " + filename,
-          propiedad: propActualizada
+          aviso: avisoActualizado
         });
       });
 

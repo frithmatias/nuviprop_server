@@ -11,5 +11,7 @@ var mdAuth = require("../middlewares/auth.middleware");
 app.get("/", UserController.getUsers);
 app.post("/", UserController.createUser);
 app.put('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], UserController.updateUser); //put o patch
+app.put('/addfavourite/:userid', [mdAuth.verificaToken, mdAuth.canUpdate], UserController.addFavourite);
 app.delete('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], UserController.deleteUser);
+
 module.exports = app;

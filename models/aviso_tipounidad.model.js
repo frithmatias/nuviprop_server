@@ -10,7 +10,7 @@ var unidadesSchema = new Schema(
         idparent: { type: String, required: [true, "falta id del tipo de inmueble"] }
 
     },
-    { collection: "tipo_unidades" }
+    { collection: "avisos_tipounidad" }
 );
 
 module.exports = mongoose.model("Unidades", unidadesSchema);

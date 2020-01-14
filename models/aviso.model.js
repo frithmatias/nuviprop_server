@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var propiedadSchema = new Schema(
+var avisoSchema = new Schema(
   {
 
     // recibe un objeto de JS
@@ -24,11 +24,11 @@ var propiedadSchema = new Schema(
       _id: { type: String, required: [true, "El dato _id del tipooperacion es necesario"] },
     },
     titulo: { type: String, required: [true, "El dato titulo es necesario"] },
-    descripcion: { type: String, required: [true, "El dato descripcion de propiedad es necesario"] },
-    precio: { type: Number, required: [true, "El dato precio de propiedad es necesario"] },
-    moneda: { type: String, required: [true, "El dato radiogroup_moneda de propiedad es necesario"] },
-    nopublicarprecio: { type: Boolean, required: [true, "El dato no_publicar_precio de propiedad es necesario"] },
-    aptocredito: { type: Boolean, required: [true, "El dato apto_credito de propiedad es necesario"] },
+    descripcion: { type: String, required: [true, "El dato descripcion del aviso es necesario"] },
+    precio: { type: Number, required: [true, "El dato precio del aviso es necesario"] },
+    moneda: { type: String, required: [true, "El dato radiogroup_moneda del aviso es necesario"] },
+    nopublicarprecio: { type: Boolean, required: [true, "El dato no_publicar_precio del aviso es necesario"] },
+    aptocredito: { type: Boolean, required: [true, "El dato apto_credito del aviso es necesario"] },
     provincia: {
       nombre: { type: String, required: [true, "El dato nombre de la provincia es necesario"] },
       id: { type: String, required: [true, "El dato id de la provincia es necesario"] },
@@ -45,7 +45,7 @@ var propiedadSchema = new Schema(
     coords: {
       lat: { type: String, required: [true, "El dato lat de coords es necesario"] },
       lng: { type: String, required: [true, "El dato lng de coords es necesario"] },
-    }, codigopostal: { type: String, required: [true, "El dato codigopostal de propiedad es necesario"] },
+    }, codigopostal: { type: String, required: [true, "El dato codigopostal del aviso es necesario"] },
     imgs: [{ type: String, required: false }],
     activo: { type: Boolean, required: [true, "El backend no definio el estado activo/inactivo del aviso"] },
 
@@ -53,7 +53,7 @@ var propiedadSchema = new Schema(
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: [true, "El id del usuario es un campo obligatorio"] },
     // inmobiliaria: { type: Schema.Types.ObjectId, ref: 'Inmobiliaria', required: [true, 'El id de la inmobiliaria es un campo obligatorio'] },
   },
-  { collection: "propiedades" }
+  { collection: "avisos" }
 );
 
-module.exports = mongoose.model("Propiedad", propiedadSchema);
+module.exports = mongoose.model("Aviso", avisoSchema);

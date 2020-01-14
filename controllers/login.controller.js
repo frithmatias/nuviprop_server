@@ -240,9 +240,10 @@ function obtenerMenu(ROLE) {
       titulo: "Usuario",
       icono: "mdi mdi-account-circle",
       submenu: [
-        { titulo: "Propiedades", url: "/propiedades" },
-        { titulo: "Mis Propiedades", url: "/mispropiedades" },
-        { titulo: "Mis Busquedas", url: "/busquedas" },
+        { titulo: "Mi Perfil", url: "/profile", icono: "mdi mdi-face" },
+        { titulo: "Tema", url: "/account-settings", icono: "mdi mdi-format-color-fill" },
+        { titulo: "Mis Avisos", url: "/misavisos", icono: "mdi mdi-city" },
+        { titulo: "Mis Busquedas", url: "/busquedas", icono: "mdi mdi-search-web" },
       ]
     }
   ];
@@ -252,8 +253,8 @@ function obtenerMenu(ROLE) {
       titulo: "Administracion",
       icono: "mdi mdi-settings",
       submenu: [
-        { titulo: "Usuarios", url: "/usuarios" },
-        { titulo: "Inmobiliarias", url: "/inmobiliarias" }
+        { titulo: "Usuarios", url: "/usuarios", icono: "mdi mdi-account-multiple-plus" },
+        { titulo: "Inmobiliarias", url: "/inmobiliarias", icono: "mdi mdi-city" }
       ]
     }); // unshift lo coloca al princio del array, push lo coloca al final.
   }

@@ -2,12 +2,9 @@ var express = require('express');
 
 var app = express();
 
-var Propiedad = require('../models/propiedad.model');
+var Aviso = require('../models/aviso.model');
 var Usuario = require('../models/usuario.model');
-
 var Localidad = require('../models/localidad.model');
-var TipoInmueble = require('../models/tipo_inmuebles.model');
-var TipoOperacion = require('../models/tipo_operaciones.model');
 
 // ==============================
 // Busqueda por colección
@@ -29,8 +26,8 @@ function buscarEnColeccion(req, res) {
             promesa = buscarUsuarios(regex);
             break;
 
-        case 'propiedades':
-            promesa = buscarPropiedades(regex);
+        case 'avisos':
+            promesa = buscarAvisos(regex);
             break;
         case 'localidades':
             promesa = buscarLocalidades(patron, regex);
@@ -38,7 +35,7 @@ function buscarEnColeccion(req, res) {
         default:
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Las colecciones admitidas sólo son: usuarios, propiedades',
+                mensaje: 'Las colecciones admitidas sólo son: usuarios, avisos',
                 error: { message: 'Tipo de coleccion/coleccion no válido' }
             });
 
@@ -73,14 +70,14 @@ function buscarTodasColecciones(req, res) {
 
 
     Promise.all([
-        buscarPropiedades(patron, regex),
+        buscarAvisos(patron, regex),
         buscarUsuarios(patron, regex)
     ])
         .then(respuestas => {
 
             res.status(200).json({
                 ok: true,
-                propiedades: respuestas[0],
+                avisos: respuestas[0],
                 usuarios: respuestas[1]
             });
         })
@@ -89,11 +86,11 @@ function buscarTodasColecciones(req, res) {
 }
 
 
-function buscarPropiedades(regex) {
+function buscarAvisos(regex) {
 
     return new Promise((resolve, reject) => {
 
-        Propiedad.find({})
+        Aviso.find({})
             .or([
                 { descripcion: regex },
                 { zonificacion: regex },
@@ -101,16 +98,16 @@ function buscarPropiedades(regex) {
                 { provincia: regex },
                 { ciudad: regex },
                 { barrio: regex },
-                { tipopropiedad: regex },
+                { tipoaviso: regex },
                 { ambienteslista: regex }
             ])
             .populate('usuario', 'nombre email')
-            .exec((err, propiedades) => {
+            .exec((err, avisos) => {
 
                 if (err) {
-                    reject('Error al cargar propiedades', err);
+                    reject('Error al cargar avisos', err);
                 } else {
-                    resolve(propiedades);
+                    resolve(avisos);
                 }
             });
     });

@@ -9,7 +9,7 @@ var operacionesSchema = new Schema(
         id: { type: String, required: [true, "falta id del tipo de operacion"] }
 
     },
-    { collection: "tipo_operaciones" }
+    { collection: "avisos_tipooperacion" }
 );
 
 module.exports = mongoose.model("Operaciones", operacionesSchema);

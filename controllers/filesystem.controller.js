@@ -2,7 +2,7 @@ var fs = require("fs");
 var path = require("path");
 
 function createFolder(dirPath) {
-    // ./uploads/propiedad
+    // ./uploads/aviso
     // ./uploads/usuario
     var pathUser = path.resolve(__dirname, '../', dirPath);
     var existe = fs.existsSync(pathUser);
@@ -29,7 +29,7 @@ function deleteFolder(dirPath) {
     };
     deleteFolderRecursive(dirPath);
     if (fs.existsSync(dirPath)) {
-        console.log('No se pudo borrar la carpeta que contiene las imagenes de la propiedad!');
+        console.log('No se pudo borrar la carpeta que contiene las imagenes del aviso!');
         return (false);
     } else {
         console.log('Carpeta borrada correctamente.');

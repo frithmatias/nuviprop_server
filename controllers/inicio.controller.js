@@ -1,8 +1,8 @@
-var tipoOperacion = require('../models/tipo_operaciones.model');
-var tipoInmueble = require('../models/tipo_inmuebles.model');
-var tipoUnidad = require('../models/tipo_unidades.model');
-var provinciaModel = require('../models/tipo_provincias.model');
-var propiedadModel = require('../models/propiedad.model');
+var tipoOperacion = require('../models/aviso_tipooperacion.model');
+var tipoInmueble = require('../models/aviso_tipoinmueble.model');
+var tipoUnidad = require('../models/aviso_tipounidad.model');
+var provinciaModel = require('../models/aviso_provincia.model');
+var avisoModel = require('../models/aviso.model');
 var localidadModel = require('../models/localidad.model');
 
 function getOperaciones(req, res) {
@@ -112,13 +112,13 @@ function getProvincias(req, res) {
             });
 }
 
-function getPropsCriteria(req, res) {
+function getAvisosCriteria(req, res) {
     // desde es una variable que utilizo para decile desde donde empiece a traer registros,
     // y desde ahí me traiga los siguientes 5 registros.
-    // http://localhost:3000/propiedad?desde=10
+    // http://localhost:3000/aviso?desde=10
 
     // REQ.BODY -> lo que viene en el body puede ser un objeto 
-    // REQ.PARAMS -> lo que viene como parámetros en la URL (propiedad/5e0826513392d12ca077e925)
+    // REQ.PARAMS -> lo que viene como parámetros en la URL (aviso/5e0826513392d12ca077e925)
     // REQ.QUERY -> lo que viene como argumentos en la URL (&nombre=diego&edad=40)
 
     // TIPO DE OPERACION
@@ -134,33 +134,33 @@ function getPropsCriteria(req, res) {
     localidad = localidad.replace(/_/g, ' ');
     var localidades = localidad.split('-');
 
-
-
-
     var pagina = req.params.pagina || 0;
     pagina = Number(pagina);
     var desde = pagina * 20;
     var query = {};
 
-    console.log('operaciones: ', operaciones);
-    console.log('inmuebles: ', inmuebles);
-    console.log('localidades: ', localidades);
+    // console.log('operaciones: ', operaciones);
+    // console.log('inmuebles: ', inmuebles);
+    // console.log('localidades: ', localidades);
 
-    if (typeof operacion != 'undefined') query['tipooperacion._id'] = operacion;
-    if (typeof inmueble != 'undefined') query['tipoinmueble._id'] = inmueble;
-    query['localidad._id'] = localidad;
+    console.log(operacion);
+    if ((operacion === 'undefined') || (inmueble === 'undefined')) {
+        return res.status(400).json({
+            // ERROR DE BASE DE DATOS
+            ok: false,
+            mensaje: "No se indica tipo de operación o el tipo de inmueble."
+        });
+    }
 
-
-    // console.log('Reultado del query:', query);
-    console.log(localidades[0]);
-    //Propiedad.find({a, 'nombre email img role')
-    const aggregate = propiedadModel.aggregate([{
-        // db.propiedades.aggregate([{
-        $project:
+    //Aviso.find({a, 'nombre email img role')
+    const aggregate = avisoModel.aggregate([{
+        // db.avisos.aggregate([{
+        $addFields:
         {
             "localidad.nombre": { $toLower: "$localidad.nombre" },
             "tipoinmueble.id": { $toLower: "$tipoinmueble.id" },
             "tipooperacion.id": { $toLower: "$tipooperacion.id" },
+
         }
     }, {
         $match: {
@@ -174,29 +174,28 @@ function getPropsCriteria(req, res) {
 
         .skip(desde)
         .limit(20)
-        .exec((err, propiedades) => {
-            // el segundo argumento es un callback (err, propiedads) =>
+        .exec((err, avisos) => {
+            // el segundo argumento es un callback (err, avisos) =>
 
             if (err) {
                 return res.status(500).json({
                     // ERROR DE BASE DE DATOS
                     ok: false,
-                    mensaje: "Error cargando propiedad",
+                    mensaje: "Error cargando aviso",
                     errors: err
                 });
             }
-            console.log('RESPUESTA:', propiedades);
+            console.log('RESPUESTA:', avisos);
 
-            propiedadModel.count({ activo: true }, (err, cantidad) => {
-                res.status(200).json({
-                    ok: true,
-                    mensaje: "Peticion GET de PROPIEDADES realizada correctamente.",
-                    propiedades: propiedades,
-                    total: cantidad
-                    // En standar ES6 no haría falta definir propiedads: propiedads porque es como redundante,
-                    // pero lo vamos a dejar así para que sea mas claro.
-                });
+            res.status(200).json({
+                ok: true,
+                mensaje: "Peticion GET de avisos realizada correctamente.",
+                avisos: avisos,
+                total: avisos.length
+                // En standar ES6 no haría falta definir avisos: avisos porque es como redundante,
+                // pero lo vamos a dejar así para que sea mas claro.
             });
+
         });
 }
 
@@ -254,4 +253,4 @@ function getLocalidaesEnDepartamento(req, res) {
 
 
 }
-module.exports = { getOperaciones, getInmuebles, getUnidades, getProvincias, getPropsCriteria, getLocalidaesEnDepartamento };
+module.exports = { getOperaciones, getInmuebles, getUnidades, getProvincias, getAvisosCriteria, getLocalidaesEnDepartamento };

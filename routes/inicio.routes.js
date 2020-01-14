@@ -14,5 +14,5 @@ app.get('/provincias', inicioController.getProvincias);
 app.get('/localidadesendepartamento/:idlocalidad', inicioController.getLocalidaesEnDepartamento);
 
 app.get('/unidades/:idparent', inicioController.getUnidades);
-app.get('/propiedades/:operacion?/:inmueble?/:localidad/:pagina', inicioController.getPropsCriteria);
+app.get('/avisos/:operacion?/:inmueble?/:localidad/:pagina', inicioController.getAvisosCriteria);
 module.exports = app;

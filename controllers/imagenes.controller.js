@@ -16,7 +16,7 @@ function getImage(req, res) {
         res.sendFile(pathNoImage);
     }
     // Ahora si para ver la imgen por HTTP 
-    // http://localhost:3000/imagen/usuario/5c66e86d2ccf0904306d3925-885.jpg
+    // http://localhost:3000/imagenes/usuarios/5dc87bd8d5756a191422c938/5dc87bd8d5756a191422c938-88.png
 }
 
 module.exports = { getImage };

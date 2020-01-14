@@ -9,7 +9,7 @@ var inmueblesSchema = new Schema(
         id: { type: String, required: [true, "falta id del tipo de inmueble"] }
 
     },
-    { collection: "tipo_inmuebles" }
+    { collection: "avisos_tipoinmueble" }
 );
 
 module.exports = mongoose.model("Inmuebles", inmueblesSchema);

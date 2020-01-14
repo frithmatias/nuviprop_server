@@ -83,7 +83,7 @@ app.use(fileUpload());
 // ==================================================
 var loginRoutes = require("./routes/login.routes");
 var usuariosRoutes = require("./routes/usuarios.routes");
-var propiedadesRoutes = require("./routes/propiedades.routes");
+var avisosRoutes = require("./routes/avisos.routes");
 var inmobiliariasRoutes = require("./routes/inmobiliarias.routes");
 var busquedaRoutes = require('./routes/buscar.routes');
 var uploadsRoutes = require("./routes/uploads.routes");
@@ -97,7 +97,7 @@ var inicioRoutes = require("./routes/inicio.routes");
 // ==================================================
 app.use("/login", loginRoutes);
 app.use("/usuarios", usuariosRoutes);
-app.use("/propiedades", propiedadesRoutes);
+app.use("/avisos", avisosRoutes);
 app.use("/inmobiliarias", inmobiliariasRoutes);
 app.use('/buscar', busquedaRoutes);
 app.use("/uploads", uploadsRoutes);

@@ -183,5 +183,4 @@ function deleteInmob(req, res) {
 
 };
 
-//module.exports = { getProps, getProp, createProp, updateProp, pauseProp, deleteProp };
 module.exports = { getInmobs, getInmob, createInmob, updateInmob, deleteInmob };
