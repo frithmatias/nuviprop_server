@@ -12,6 +12,10 @@ function getAvisosAll(req, res) {
   pagina = Number(pagina);
   var desde = pagina * 20;
   AvisoModel.find()
+    .populate('tipooperacion')
+    .populate('tipoinmueble')
+    .populate('tipounidad')
+    .populate('localidad')
     .skip(desde)
     .limit(20)
     .exec((err, avisos) => {
@@ -44,6 +48,10 @@ function getAvisosActive(req, res) {
 
   //Avisoiedad.find({a, 'nombre email img role')
   AvisoModel.find({ activo: true })
+    .populate('tipooperacion')
+    .populate('tipoinmueble')
+    .populate('tipounidad')
+    .populate('localidad')
     .skip(desde)
     .limit(20)
     .exec((err, avisos) => {
@@ -80,8 +88,11 @@ function getAviso(req, res) {
 
   //Avisoiedad.find({a, 'nombre email img role')
   AvisoModel.findById(id)
+    .populate('tipooperacion')
+    .populate('tipoinmueble')
+    .populate('tipounidad')
+    .populate('localidad')
     .populate('usuario', 'nombre img email')
-    .populate('inmobiliaria')
     .populate('detalles')
     .exec((err, aviso) => {
       // el segundo argumento es un callback (err, avisos) =>
@@ -123,24 +134,24 @@ function createAviso(req, res) {
     altura: body.altura,
     piso: body.piso,
     depto: body.depto,
-    tipoinmueble: body.tipoinmueble,
-    tipounidad: body.tipounidad,
-    tipooperacion: body.tipooperacion,
+
+
     titulo: body.titulo,
     descripcion: body.descripcion,
     precio: body.precio,
     moneda: body.moneda,
     nopublicarprecio: body.nopublicarprecio,
     aptocredito: body.aptocredito,
-    provincia: body.provincia,
-    departamento: body.departamento,
-    localidad: body.localidad,
-    coords: body.coords,
     codigopostal: body.codigopostal,
     imgs: [],
     activo: false,
+
+    // _id to populate
+    tipoinmueble: body.tipoinmueble,
+    tipounidad: body.tipounidad,
+    tipooperacion: body.tipooperacion,
+    localidad: body.localidad,
     usuario: req.usuario._id
-    // inmobiliaria: body.inmobiliaria,
   });
 
   aviso.save((err, avisoGuardada) => {
@@ -330,77 +341,78 @@ function createDetails(req, res) {
   var body = req.body;
   var idaviso = req.params.idaviso;
 
-  AvisoModel.findById(idaviso, (err, resAvisoModel) => {
+  AvisoModel.findById(idaviso)
+    .exec((err, resAvisoModel) => {
 
-    if (!resAvisoModel) {
-      return res.status(400).json({
-        ok: false,
-        mensaje: "La aviso no existe!",
-        errors: {
-          message: "La aviso que intenta acutalizar NO existe."
-        }
-      });
-    }
+      if (!resAvisoModel) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "La aviso no existe!",
+          errors: {
+            message: "La aviso que intenta acutalizar NO existe."
+          }
+        });
+      }
 
-    if (resAvisoModel.detalles) {
-      return res.status(400).json({
-        // ERROR DE BASE DE DATOS
-        ok: false,
-        mensaje: "La aviso para el POST ya tiene detalles relacionados!",
-        errors: err // Este objeto con los errores viene de mongoose
-      });
-    }
-
-
-    var detalles = new DetailModel({
-      superficietotal: body.superficietotal,
-      superficieconstruible: body.superficieconstruible,
-      zonificacion: body.zonificacion,
-      longitudfondo: body.longitudfondo,
-      longitudfrente: body.longitudfrente,
-      tipoterreno: body.tipoterreno,
-      fot: body.fot,
-      fos: body.fos,
-      tipopendiente: body.tipopendiente,
-      tipovista: body.tipovista,
-      tipocosta: body.tipocosta,
-      estado: body.estado,
-      avisoocupada: body.avisoocupada,
-      fondoirregular: body.fondoirregular,
-      frenteirregular: body.frenteirregular,
-      demolicion: body.demolicion,
-      lateralizquierdoirregular: body.lateralizquierdoirregular,
-      lateralderechoirregular: body.lateralderechoirregular,
-      instalaciones: body.instalaciones,
-      servicios: body.servicios
-    });
-
-    detalles.save((err, detallesGuardados) => {
-
-      if (err) {
+      if (resAvisoModel.detalles) {
         return res.status(400).json({
           // ERROR DE BASE DE DATOS
           ok: false,
-          mensaje: "Error guardando detalles",
+          mensaje: "La aviso para el POST ya tiene detalles relacionados!",
           errors: err // Este objeto con los errores viene de mongoose
         });
       }
 
-      resAvisoModel.detalles = detallesGuardados._id;
-      req.usuario.password = ';)';
 
-      resAvisoModel.save((err, resAvisoActualizada) => {
-        res.status(200).json({
-          ok: true,
-          mensaje: "El id del detalle fue ingresado correctamente en el documento de la aviso.",
-          detalles: detallesGuardados,
-          aviso: resAvisoActualizada,
-          usuariotoken: req.usuario // USUARIO QUE HIZO LA SOLICITUD
-        });
+      var detalles = new DetailModel({
+        superficietotal: body.superficietotal,
+        superficieconstruible: body.superficieconstruible,
+        zonificacion: body.zonificacion,
+        longitudfondo: body.longitudfondo,
+        longitudfrente: body.longitudfrente,
+        tipoterreno: body.tipoterreno,
+        fot: body.fot,
+        fos: body.fos,
+        tipopendiente: body.tipopendiente,
+        tipovista: body.tipovista,
+        tipocosta: body.tipocosta,
+        estado: body.estado,
+        propiedadocupada: body.propiedadocupada,
+        fondoirregular: body.fondoirregular,
+        frenteirregular: body.frenteirregular,
+        demolicion: body.demolicion,
+        lateralizquierdoirregular: body.lateralizquierdoirregular,
+        lateralderechoirregular: body.lateralderechoirregular,
+        instalaciones: body.instalaciones,
+        servicios: body.servicios
       });
 
+      detalles.save((err, detallesGuardados) => {
+
+        if (err) {
+          return res.status(400).json({
+            // ERROR DE BASE DE DATOS
+            ok: false,
+            mensaje: "Error guardando detalles",
+            errors: err // Este objeto con los errores viene de mongoose
+          });
+        }
+
+        resAvisoModel.detalles = detallesGuardados._id;
+        req.usuario.password = ';)';
+
+        resAvisoModel.save((err, resAvisoActualizada) => {
+          res.status(200).json({
+            ok: true,
+            mensaje: "El id del detalle fue ingresado correctamente en el documento de la aviso.",
+            detalles: detallesGuardados,
+            aviso: resAvisoActualizada,
+            usuariotoken: req.usuario // USUARIO QUE HIZO LA SOLICITUD
+          });
+        });
+
+      });
     });
-  });
 }
 
 function updateDetails(req, res) {

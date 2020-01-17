@@ -131,7 +131,7 @@ function getAvisosCriteria(req, res) {
 
     // LOCALIDAD 
     var localidad = req.params.localidad;
-    localidad = localidad.replace(/_/g, ' ');
+    //localidad = localidad.replace(/_/g, ' ');
     var localidades = localidad.split('-');
 
     var pagina = req.params.pagina || 0;
@@ -139,11 +139,10 @@ function getAvisosCriteria(req, res) {
     var desde = pagina * 20;
     var query = {};
 
-    // console.log('operaciones: ', operaciones);
-    // console.log('inmuebles: ', inmuebles);
-    // console.log('localidades: ', localidades);
+    console.log('operaciones: ', operaciones);
+    console.log('inmuebles: ', inmuebles);
+    console.log('localidades: ', localidades);
 
-    console.log(operacion);
     if ((operacion === 'undefined') || (inmueble === 'undefined')) {
         return res.status(400).json({
             // ERROR DE BASE DE DATOS
@@ -153,24 +152,39 @@ function getAvisosCriteria(req, res) {
     }
 
     //Aviso.find({a, 'nombre email img role')
-    const aggregate = avisoModel.aggregate([{
+    const aggregate = avisoModel.aggregate([
         // db.avisos.aggregate([{
-        $addFields:
-        {
-            "localidad.nombre": { $toLower: "$localidad.nombre" },
-            "tipoinmueble.id": { $toLower: "$tipoinmueble.id" },
-            "tipooperacion.id": { $toLower: "$tipooperacion.id" },
+        //     $addFields:
+        //     {
+        //         "localidad": { $toLower: "$localidad.nombre" },
+        //         "tipoinmueble": { $toLower: "$tipoinmueble.id" },
+        //         "tipooperacion": { $toLower: "$tipooperacion.id" },
 
-        }
-    }, {
-        $match: {
-            $and: [
-                { "tipooperacion.id": { $in: operaciones } },
-                { "tipoinmueble.id": { $in: inmuebles } },
-                { "localidad.nombre": { $in: localidades } }
-            ]
-        }
-    }])
+        //     }
+        // }, 
+        // {
+
+
+        // Convierto los ObjectId("5e04b4bd3cb7d5a2401c9895")}) a String "5e04b4bd3cb7d5a2401c9895"
+        // La función inversa es $toObjectId -> {$toObjectId: "5ab9cbfa31c2ab715d42129e"}
+        {
+            $addFields:
+            {
+                "localidad": { $toString: "$localidad" },
+                "tipoinmueble": { $toString: "$tipoinmueble" },
+                "tipooperacion": { $toString: "$tipooperacion" },
+
+            }
+        },
+        {
+            $match: {
+                $and: [
+                    { "tipooperacion": { $in: operaciones } },
+                    { "tipoinmueble": { $in: inmuebles } },
+                    { "localidad": { $in: localidades } }
+                ]
+            }
+        }])
 
         .skip(desde)
         .limit(20)

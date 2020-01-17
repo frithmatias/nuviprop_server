@@ -242,6 +242,8 @@ function obtenerMenu(ROLE) {
       submenu: [
         { titulo: "Mi Perfil", url: "/profile", icono: "mdi mdi-face" },
         { titulo: "Tema", url: "/account-settings", icono: "mdi mdi-format-color-fill" },
+        { titulo: "Nuevo Aviso", url: "/aviso/nuevo", icono: "mdi mdi-plus-circle-outline" },
+        { titulo: "Mis Favoritos", url: "/favoritos", icono: "mdi mdi-heart" },
         { titulo: "Mis Avisos", url: "/misavisos", icono: "mdi mdi-city" },
         { titulo: "Mis Busquedas", url: "/busquedas", icono: "mdi mdi-search-web" },
       ]

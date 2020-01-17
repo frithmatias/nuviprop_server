@@ -18,8 +18,6 @@ app.delete('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.del
 // Detalles
 app.post('/detalles/:idaviso', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.createDetails);
 app.put('/detalles/:id', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.updateDetails); //put o patch
-
 app.put('/pause/:id', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.pausedAviso); //put o patch
-
 
 module.exports = app;
