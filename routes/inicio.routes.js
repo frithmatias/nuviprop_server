@@ -7,12 +7,13 @@ var inicioController = require('../controllers/inicio.controller');
 // Middlewares 
 var mdAuth = require('../middlewares/auth.middleware');
 
-// Rutas
+// Form Avisos
 app.get('/operaciones', inicioController.getOperaciones);
 app.get('/inmuebles', inicioController.getInmuebles);
-app.get('/provincias', inicioController.getProvincias);
-app.get('/localidadesendepartamento/:idlocalidad', inicioController.getLocalidaesEnDepartamento);
-
 app.get('/unidades/:idparent', inicioController.getUnidades);
-app.get('/avisos/:operacion?/:inmueble?/:localidad/:pagina', inicioController.getAvisosCriteria);
+app.get('/cambio', inicioController.getCambio);
+app.get('/provincias', inicioController.getProvincias);
+
+
+app.get('/localidadesendepartamento/:idlocalidad', inicioController.getLocalidaesEnDepartamento);
 module.exports = app;

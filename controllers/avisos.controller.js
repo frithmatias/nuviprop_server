@@ -7,11 +7,113 @@ var fs = require("fs");
 var path = require("path");
 // http://localhost:3000/aviso
 
-function getAvisosAll(req, res) {
-  var pagina = req.query.pagina || 0;
+function getAvisosCriteria(req, res) {
+  // desde es una variable que utilizo para decile desde donde empiece a traer registros,
+  // y desde ahí me traiga los siguientes 5 registros.
+  // http://localhost:3000/aviso?desde=10
+
+  // REQ.BODY -> lo que viene en el body puede ser un objeto 
+  // REQ.PARAMS -> lo que viene como parámetros en la URL (aviso/5e0826513392d12ca077e925)
+  // REQ.QUERY -> lo que viene como argumentos en la URL (&nombre=diego&edad=40)
+
+  // TIPO DE OPERACION
+  var operacion = req.params.operacion;
+  var operaciones = operacion.split('-');
+
+  // TIPO DE INMUEBLE
+  var inmueble = req.params.inmueble;
+  var inmuebles = inmueble.split('-');
+
+  // LOCALIDAD 
+  var localidad = req.params.localidad;
+  //localidad = localidad.replace(/_/g, ' ');
+  var localidades = localidad.split('-');
+
+  var pagina = req.params.pagina || 0;
   pagina = Number(pagina);
   var desde = pagina * 20;
-  AvisoModel.find()
+  var query = {};
+
+  console.log('operaciones: ', operaciones);
+  console.log('inmuebles: ', inmuebles);
+  console.log('localidades: ', localidades);
+
+  if ((operacion === 'undefined') || (inmueble === 'undefined')) {
+    return res.status(400).json({
+      // ERROR DE BASE DE DATOS
+      ok: false,
+      mensaje: "No se indica tipo de operación o el tipo de inmueble."
+    });
+  }
+
+  //Aviso.find({a, 'nombre email img role')
+  const aggregate = AvisoModel.aggregate([
+    // db.avisos.aggregate([{
+    //     $addFields:
+    //     {
+    //         "localidad": { $toLower: "$localidad.nombre" },
+    //         "tipoinmueble": { $toLower: "$tipoinmueble.id" },
+    //         "tipooperacion": { $toLower: "$tipooperacion.id" },
+
+    //     }
+    // }, 
+    // {
+
+
+    // Convierto los ObjectId("5e04b4bd3cb7d5a2401c9895")}) a String "5e04b4bd3cb7d5a2401c9895"
+    // La función inversa es $toObjectId -> {$toObjectId: "5ab9cbfa31c2ab715d42129e"}
+    {
+      $addFields:
+      {
+        "localidad": { $toString: "$localidad" },
+        "tipoinmueble": { $toString: "$tipoinmueble" },
+        "tipooperacion": { $toString: "$tipooperacion" },
+
+      }
+    },
+    {
+      $match: {
+        $and: [
+          { "tipooperacion": { $in: operaciones } },
+          { "tipoinmueble": { $in: inmuebles } },
+          { "localidad": { $in: localidades } }
+        ]
+      }
+    }])
+
+    .skip(desde)
+    .limit(20)
+    .exec((err, avisos) => {
+      // el segundo argumento es un callback (err, avisos) =>
+
+      if (err) {
+        return res.status(500).json({
+          // ERROR DE BASE DE DATOS
+          ok: false,
+          mensaje: "Error cargando aviso",
+          errors: err
+        });
+      }
+      console.log('RESPUESTA:', avisos);
+
+      res.status(200).json({
+        ok: true,
+        mensaje: "Peticion GET de avisos realizada correctamente.",
+        avisos: avisos,
+        total: avisos.length
+        // En standar ES6 no haría falta definir avisos: avisos porque es como redundante,
+        // pero lo vamos a dejar así para que sea mas claro.
+      });
+
+    });
+}
+
+function getMisAvisos(req, res) {
+  var pagina = req.query.pagina || 0;
+  var uid = req.params.uid;
+  pagina = Number(pagina);
+  var desde = pagina * 20;
+  AvisoModel.find({ 'usuario': uid })
     .populate('tipooperacion')
     .populate('tipoinmueble')
     .populate('tipounidad')
@@ -134,12 +236,10 @@ function createAviso(req, res) {
     altura: body.altura,
     piso: body.piso,
     depto: body.depto,
-
-
     titulo: body.titulo,
     descripcion: body.descripcion,
     precio: body.precio,
-    moneda: body.moneda,
+    tipocambio: body.tipocambio,
     nopublicarprecio: body.nopublicarprecio,
     aptocredito: body.aptocredito,
     codigopostal: body.codigopostal,
@@ -218,7 +318,7 @@ function updateAviso(req, res) {
     aviso.titulo = body.titulo;
     aviso.descripcion = body.descripcion;
     aviso.precio = body.precio;
-    aviso.moneda = body.moneda;
+    aviso.tipocambio = body.tipocambio;
     aviso.nopublicarprecio = body.nopublicarprecio;
     aviso.aptocredito = body.aptocredito;
     aviso.provincia = body.provincia;
@@ -365,26 +465,36 @@ function createDetails(req, res) {
 
 
       var detalles = new DetailModel({
-        superficietotal: body.superficietotal,
-        superficieconstruible: body.superficieconstruible,
-        zonificacion: body.zonificacion,
-        longitudfondo: body.longitudfondo,
+
+        orientacion: body.orientacion,
+        superficiecubierta: body.superficiecubierta,
+        superficiedescubierta: body.superficiedescubierta,
+        superficiedelterreno: body.superficiedelterreno,
+        cantidaddedormitorios: body.cantidaddedormitorios,
+        cantidaddebanios: body.cantidaddebanios,
+        cantidaddetoilettes: body.cantidaddetoilettes,
+        cantidaddecocheras: body.cantidaddecocheras,
+        cantidaddeplantas: body.cantidaddeplantas,
+        cantidaddeambientes: body.cantidaddeambientes,
+        antiguedad: body.antiguedad,
         longitudfrente: body.longitudfrente,
-        tipoterreno: body.tipoterreno,
-        fot: body.fot,
-        fos: body.fos,
+        longitudfondo: body.longitudfondo,
+        tipotecho: body.tipotecho,
         tipopendiente: body.tipopendiente,
         tipovista: body.tipovista,
         tipocosta: body.tipocosta,
+        tipopiso: body.tipopiso,
         estado: body.estado,
-        propiedadocupada: body.propiedadocupada,
-        fondoirregular: body.fondoirregular,
-        frenteirregular: body.frenteirregular,
-        demolicion: body.demolicion,
-        lateralizquierdoirregular: body.lateralizquierdoirregular,
-        lateralderechoirregular: body.lateralderechoirregular,
+        ambientes: body.ambientes,
         instalaciones: body.instalaciones,
-        servicios: body.servicios
+        servicios: body.servicios,
+        expensas: body.expensas,
+        tipoexpensas: body.tipoexpensas,
+        disposicion: body.disposicion,
+        tipocochera: body.tipocochera,
+        tipocoberturacochera: body.tipocoberturacochera,
+        tipobalcon: body.tipobalcon,
+        tipoterreno: body.tipoterreno
       });
 
       detalles.save((err, detallesGuardados) => {
@@ -417,7 +527,7 @@ function createDetails(req, res) {
 
 function updateDetails(req, res) {
   var body = req.body;
-  var id = req.params.id;
+  var id = req.params.idaviso;
 
   AvisoModel.findById(id, (err, aviso) => {
     if (err) {
@@ -454,26 +564,36 @@ function updateDetails(req, res) {
         });
       }
       // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el aviso.
-      detalles.superficietotal = body.superficietotal;
-      detalles.superficieconstruible = body.superficieconstruible;
-      detalles.zonificacion = body.zonificacion;
-      detalles.longitudfondo = body.longitudfondo;
+      detalles.orientacion = body.orientacion;
+      detalles.superficiecubierta = body.superficiecubierta;
+      detalles.superficiedescubierta = body.superficiedescubierta;
+      detalles.superficiedelterreno = body.superficiedelterreno;
+      detalles.cantidaddedormitorios = body.cantidaddedormitorios;
+      detalles.cantidaddebanios = body.cantidaddebanios;
+      detalles.cantidaddetoilettes = body.cantidaddetoilettes;
+      detalles.cantidaddecocheras = body.cantidaddecocheras;
+      detalles.cantidaddeplantas = body.cantidaddeplantas;
+      detalles.cantidaddeambientes = body.cantidaddeambientes;
+      detalles.antiguedad = body.antiguedad;
       detalles.longitudfrente = body.longitudfrente;
-      detalles.tipoterreno = body.tipoterreno;
-      detalles.fot = body.fot;
-      detalles.fos = body.fos;
+      detalles.longitudfondo = body.longitudfondo;
+      detalles.tipotecho = body.tipotecho;
       detalles.tipopendiente = body.tipopendiente;
       detalles.tipovista = body.tipovista;
       detalles.tipocosta = body.tipocosta;
+      detalles.tipopiso = body.tipopiso;
       detalles.estado = body.estado;
-      detalles.avisoocupada = body.avisoocupada;
-      detalles.fondoirregular = body.fondoirregular;
-      detalles.frenteirregular = body.frenteirregular;
-      detalles.demolicion = body.demolicion;
-      detalles.lateralizquierdoirregular = body.lateralizquierdoirregular;
-      detalles.lateralderechoirregular = body.lateralderechoirregular;
+      detalles.ambientes = body.ambientes;
       detalles.instalaciones = body.instalaciones;
       detalles.servicios = body.servicios;
+      detalles.expensas = body.expensas;
+      detalles.tipoexpensas = body.tipoexpensas;
+      detalles.disposicion = body.disposicion;
+      detalles.tipocochera = body.tipocochera;
+      detalles.tipocoberturacochera = body.tipocoberturacochera;
+      detalles.tipobalcon = body.tipobalcon;
+      detalles.tipoterreno = body.tipoterreno;
+
 
       // aviso.inmobiliaria = body.inmobiliaria;
       detalles.save((err, detallesGuardados) => {
@@ -503,7 +623,8 @@ function updateDetails(req, res) {
 
 
 module.exports = {
-  getAvisosAll,
+  getAvisosCriteria,
+  getMisAvisos,
   getAvisosActive,
   getAviso,
   createAviso,

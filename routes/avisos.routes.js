@@ -9,15 +9,16 @@ var mdAuth = require("../middlewares/auth.middleware");
 
 // Avisos
 app.get("/", avisoController.getAvisosActive);
-app.get("/all", [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.getAvisosAll);
-// Avisoiedad
+app.get("/misavisos/:uid", [mdAuth.verificaToken], avisoController.getMisAvisos);
+app.get('/:operacion?/:inmueble?/:localidad/:pagina', avisoController.getAvisosCriteria);
+// Aviso
 app.get("/:id", avisoController.getAviso);
-app.post("/", [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.createAviso);
-app.put('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.updateAviso); //put o patch
-app.delete('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.deleteAviso);
+app.post("/", [mdAuth.verificaToken], avisoController.createAviso);
+app.put('/:id', [mdAuth.verificaToken], avisoController.updateAviso);
+app.delete('/:id', [mdAuth.verificaToken], avisoController.deleteAviso);
 // Detalles
-app.post('/detalles/:idaviso', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.createDetails);
-app.put('/detalles/:id', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.updateDetails); //put o patch
-app.put('/pause/:id', [mdAuth.verificaToken, mdAuth.canUpdate], avisoController.pausedAviso); //put o patch
+app.post('/detalles/:idaviso', [mdAuth.verificaToken], avisoController.createDetails);
+app.put('/detalles/:idaviso', [mdAuth.verificaToken], avisoController.updateDetails);
+app.put('/pause/:id', [mdAuth.verificaToken], avisoController.pausedAviso);
 
 module.exports = app;

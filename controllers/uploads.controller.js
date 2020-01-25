@@ -11,7 +11,6 @@ var path = require("path");
 function uploadImagen(req, res) {
   var tipo = req.params.tipo;
   var id = req.params.id;
-  console.log("DATA:", req.params);
   // tipos admitidos
   var tiposValidos = ["avisos", "usuarios", "inmobiliarias"];
 
@@ -42,7 +41,6 @@ function uploadImagen(req, res) {
   var archivo = req.files.imagen; //'imagen' es el nombre dado en body>form-data en POSTMAN
   var nombreCortado = archivo.name.split(".");
   var extensionArchivo = nombreCortado[nombreCortado.length - 1];
-  console.log('extension: ', extensionArchivo);
   // extensiones permitidas
   var extensionesValidas = ["png", "jpg", "gif", "jpeg"];
   if (extensionesValidas.indexOf(extensionArchivo) < 0) {
@@ -60,14 +58,10 @@ function uploadImagen(req, res) {
   // si no existe la carpeta ej. /uploads/avisos/RtY78GhF24uItRe87ui, la crea
   // crearCarpeta(tipo, id);
   var path = `./uploads/${tipo}/${id}`;
-  console.log('enviando a crear: ', path);
+  console.log('Creando carpeta: ', path);
   var result = fileSystem.createFolder(path);
-  console.log(result);
-
-
   var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`; // Uso los backticks para hacer un template literal
   var path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
-  console.log('path: ', path);
   archivo.mv(path, err => {
     // segundo argumento es un callback, recibe un error (claro que SOLO si se recibe un error).
     if (err) {

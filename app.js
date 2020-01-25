@@ -102,7 +102,7 @@ app.use("/inmobiliarias", inmobiliariasRoutes);
 app.use('/buscar', busquedaRoutes);
 app.use("/uploads", uploadsRoutes);
 app.use("/imagenes", imagenesRoutes);
-app.use("/form", formsRoutes);
+app.use("/forms", formsRoutes);
 app.use("/inicio", inicioRoutes);
 
 // app.use('/', appRoutes);

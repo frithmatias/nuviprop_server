@@ -1,0 +1,134 @@
+CARACTERISTICAS DE LA CASA
+AMBIENTES DE LA CASA (titulo)
+MEDIDAS DE AMBIENTES (titulo)
+INSTALACIONES DE LA CASA 
+SERVICIOS DE LA CASA 
+GENERALES DE LA CASA 
+
+
+
+{
+"nombre":"Antesala"
+"id":"antesala"
+},{
+"nombre":"Baño"
+"id":"baño"
+},{
+"nombre":"Bar"
+"id":"bar"
+},{
+"nombre":"Baulera"
+"id":"baulera"
+},{
+"nombre":"Biblioteca"
+"id":"biblioteca"
+},{
+"nombre":"Circulación"
+"id":"circulación"
+},{
+"nombre":"Cochera"
+"id":"cochera"
+},{
+"nombre":"Cocina comedor"
+"id":"cocinacomedor"
+},{
+"nombre":"Cocina kitchinette"
+"id":"cocinakitchinette"
+},{
+"nombre":"Cuarto de planchar"
+"id":"cuartodeplanchar
+},{"
+"nombre":"Dependencia"
+"id":"dependencia"
+},{
+"nombre":"Entrepiso"
+"id":"entrepiso"
+},{
+"nombre":"Family Room"
+"id":"familyroom"
+},{
+"nombre":"Lavadero"
+"id":"lavadero"
+},{
+"nombre":"Living comedor"
+"id":"livingcomedor
+},{"
+"nombre":"Playroom"
+"id":"playroom"
+},{
+"nombre":"Recepcion"
+"id":"recepcion"
+},{
+"nombre":"Sotano"
+"id":"sotano"
+},{
+"nombre":"Suite"
+"id":"suite"
+},{
+"nombre":"Vestidor"
+"id":"vestidor"
+}
+
+
+db.detalles_ambientes.insertMany([
+{
+"nombre":"ascensor",
+"id":"antesala"
+},{
+"nombre":"cable",
+"id":"banio"
+},{
+"nombre":"caldera",
+"id":"bar"
+},{
+"nombre":"calefaccion",
+"id":"baulera"
+},{
+"nombre":"calefaccion tiro balanceado",
+"id":"biblioteca"
+},{
+"nombre":"calefon",
+"id":"circulación"
+},{
+"nombre":"desayunador",
+"id":"cochera"
+},{
+"nombre":"electricidad",
+"id":"cocinacomedor"
+},{
+"nombre":"espacio para vehiculos",
+"id":"cocinakitchinette"
+},{
+"nombre":"extractor de aire",
+"id":"cuartodeplanchar"
+},{
+"nombre":"gas envasasdo",
+"id":"dependencia"
+},{
+"nombre":"gas natural",
+"id":"entrepiso"
+},{
+"nombre":"hogar a leña",
+"id":"familyroom"
+},{
+"nombre":"losa raidante",
+"id":"lavadero"
+},{
+"nombre":"muebles de cocina",
+"id":"livingcomedor"
+},{
+"nombre":"piso radiante central",
+"id":"playroom"
+},{
+"nombre":"piso raidante individual",
+"id":"recepcion"
+},{
+"nombre":"radiadores",
+"id":"sotano"
+},{
+"nombre":"termotanque",
+"id":"suite"
+},{
+"nombre":"Vestidor"
+"id":"vestidor"
+}])

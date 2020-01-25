@@ -139,6 +139,349 @@ HOJA 2 - DATOS DEL AVISO
         rentas 
         telefono 
 
+
+
+
+----------------------------------
+HOJA 2 - DATOS DEL AVISO  (DEPTO TIPO CASA  )
+----------------------------------
+
+Sup.cubierta 
+Sup.descubierta 
+Disposicion: Frente, Contrafrente, Lateral, Interno 
+Cant.dormitorios (con check Monoambiente -> setea dormitorios:0 )
+Cant.baños 
+Cant.toilettes 
+Cant.cocheras 
+Antiguedad (con check A estrenar -> setea antiguedad:0)
+Cant.plantas (con check apto profesional)
+Cant.ambientes
+
+Long del frente 
+Long del fondo 
+Tipo de techo: Teja, Losa, chapa, pizarra, teja colonial, teja francesa 
+Tipo de piso: Alfombra, Baldosa, Goma, Parquet, Vinilo, Pinotea, Ceramicos y Baldosas, Madera, Ceramicos, Flotante y ceramicos, Porcelanato, Roble Eslavonia
+Expensas
+Tipo Expensas: No incluidas, incluidas, a convenir, no paga 
+Orientacion: Norte, Noreste, Noroeste, Sur, Sureste, Suroeste, Este, Oeste
+Estado: Excelente, Muy Bueno, Bueno, Regular, A refaccionar 
+
+Ambientes del departamento tipo casa (titulo)
+Altillo, antesala, baño, bar, baulera, biblioteca, circulación, cochera, cocina comedor, cocina kitchinette, cuarto de planchar, dependencia, entrepiso, family room, lavadero, living comedor, playroom, recepcion, sotano, suite, vestidor 
+
+Medidas de ambientes (titulo)
+Balcon
+cocina
+comedor diario 
+comedor 
+dependencia de servicio 
+dormitorio 
+escritorio 
+estudio 
+fondo libre 
+Hall 
+jardin fondo 
+jardin frente 
+living 
+palier 
+patio 
+pileta 
+terraza 
+
+Instalaciones del departamento tipo casa 
+Agua cloaca 
+Agua corriente 
+aire acondicionado central 
+aire acondicionado individual 
+aire caliente 
+amoblado 
+artefactos de cocina 
+
+ascensor 
+cable 
+caldera 
+calefaccion 
+calefaccion tiro balanceado 
+calefon 
+desayunador 
+electricidad 
+espacio para vehiculos 
+extractor de aire 
+gas envasasdo 
+gas natural 
+hogar a leña 
+losa raidante 
+muebles de cocina 
+piso radiante central 
+piso raidante individual 
+radiadores 
+termotanque 
+
+Servicios de departamento tipo casa 
+ABL 
+agua corriente 
+calefaccion 
+conmutador 
+electricidad 
+gas envasado 
+gas natural 
+internet 
+refrigeracion 
+rentas 
+seguridad 
+telefono 
+videocable 
+vigilancia 
+
+Generales del departamento tipo casa 
+Acepta seguro de caucion 
+Permite mascotas 
+
+
+
+----------------------------------
+HOJA 2 - DATOS DEL AVISO  (DEPTO)
+----------------------------------
+
+CARACTERISTICAS DE DEPTO
+Sup.cubierta 
+Sup.descubierta 
+Disposicion: Frente, Contrafrente, Lateral, Interno 
+Cant.dormitorios (con check Monoambiente -> setea dormitorios:0 )
+Cant.baños (con check apto profesional)
+Cant.toilettes 
+Cant.cocheras (con check cochera opcional)
+Antiguedad (con check A estrenar -> setea antiguedad:0)
+Cant.ambientes
+
+Tipo de cochera: Fija, movil, espacio, cubierta, semicubierta, entrada coche 
+Tipo de cobertura: Cubierta, descubierta, semicubierta
+Expensas 
+Tipo Expensas: No incluidas, incluidas, a convenir, no paga 
+Orientacion: Norte, Noreste, Noroeste, Sur, Sureste, Suroeste, Este, Oeste
+Tipo de balcon: frances, corrido, terraza 
+Tipo de vista: mar, lago, rio, montaña, bosque, golf, ciudad 
+Tipo de costa: Costa al mar, costa al lago, costa al rio
+Tipo de piso: Alfombra, Baldosa, Goma, Parquet, Vinilo, Pinotea, Ceramicos y Baldosas, Madera, Ceramicos, Flotante y ceramicos, Porcelanato, Roble Eslavonia
+Estado: Excelente, Muy Bueno, Bueno, Regular, A refaccionar 
+
+AMBIENTES del departamento (titulo)
+Altillo, antesala, BALCON, baño, bar, baulera, biblioteca, circulación, cochera, COCINA, cocina comedor, cocina kitchinette, COMEDOR, COMEDOR DIARIO, cuarto de panchar, dependencia, DEPENDENCIA DE SERVICIO, DORMITORIO, entrepiso, ESCRITORIO, ESTUDIO, family room, HALL, JARDIN, lavadero, LIVING, living comedor, PALIER, PATIO, playroom, recepcion, sotano, suite, TERRAZA, vestidor 
+
+MEDIDAS de ambientes (titulo)
+Balcon
+cocina
+comedor diario 
+comedor 
+dormitorio 
+escritorio 
+Hall 
+JARDIN
+living 
+palier 
+patio 
+terraza 
+
+INSTALACIONES del departamento 
+ACCESO MOVILIDAD REDUCIDA
+AGUA CALIENTE 
+AGUA CALIENTE CENTRAL 
+Agua corriente 
+aire acondicionado individual 
+amoblado 
+ascensor 
+ASCENSORES DE SERVICIOS 
+ASCENSORES PRINCIPALES 
+cable 
+CAJA FUERTE 
+caldera 
+calefaccion 
+calefaccion tiro balanceado 
+calefon 
+desayunador 
+electricidad 
+espacio para vehiculos 
+extractor de aire 
+gas envasasdo 
+gas natural 
+HIDROMASAJE
+hogar a leña 
+INSTALACION PARRILLA 
+losa radiante  
+muebles de cocina
+PAVIMENTO
+piso radiante central 
+piso raidante individual 
+radiadores 
+SOLARIUM
+TELEFONO
+termotanque 
+
+SERVICIOS de departamento 
+ABL 
+agua corriente 
+calefaccion 
+electricidad 
+gas envasado 
+gas natural 
+internet 
+LIMPIEZA
+refrigeracion 
+rentas 
+ROPA DE CAMA
+seguridad 
+telefono 
+videocable 
+vigilancia 
+
+Generales del departamento tipo casa 
+Acepta seguro de caucion 
+Permite mascotas 
+
+Caracteristicas del edificio 
+Tipo de edificio : Entre medianeras, torre, tipo block, esquina, antiguo, inteligente, primera categoria, standard,  Bajo, condominio, monoblock
+Estado: Excelente, Muy Bueno, Bueno, Regular, A refaccionar 
+Disponibilidad: (DATE PICKER)
+Cantidad de pisos
+Departamentos por piso 
+Cantidad de cocheras 
+Antiguedad  (check a estrenar)
+Superficie de la playa 
+Superficie del deposito 
+longitud del frente 
+longitud del fondo 
+tipo de frente: cemento, courting wall, ladrillo, otro
+Tipo de vista: mar, lago, rio, montaña, bosque, golf, ciudad 
+Tipo de costa: Costa al mar, costa al lago, costa al rio
+
+Instalaciones del edificio 
+Aire acondicionado central
+ascensor 
+caldera 
+cochera de cortesia 
+espacio para vehiculos 
+gimnnasio
+grupo electrogeno 
+juegos para chicos 
+laundry 
+parrilla 
+pileta 
+salon de fiestas 
+sauna 
+solarium 
+termotanque 
+
+Servicios del edificio 
+ABL, agua corriente, bar, calefaccion, cocina, conmutador, electricidad, gas envasado ,gas natural, intenret, lavanderia, refrigeracion, rentas, seguridad, telefono, videocable, vigilancia.
+
+
+----------------------------------
+HOJA 2 - DATOS DEL AVISO  (CASA)
+----------------------------------
+
+CARACTERISTICAS DE LA CASA
+
+Sup.cubierta 
+Sup.descubierta 
+Sup del terreno
+Cant.dormitorios (con check Monoambiente -> setea dormitorios:0 )
+Cant.baños 
+Cant.toilettes 
+Cant.cocheras 
+Antiguedad (con check A estrenar -> setea antiguedad:0)
+Cant.plantas 
+Cant.ambientes
+Long del frente 
+Long del fondo 
+Orientacion: Norte, Noreste, Noroeste, Sur, Sureste, Suroeste, Este, Oeste
+Tipo de techo: Teja, Losa, chapa, pizarra, teja colonial, teja francesa 
+Tipo de pendiente: (ya cargado en base de datos)
+Tipo de vista: mar, lago, rio, montaña, bosque, golf, ciudad 
+Tipo de costa: Costa al mar, costa al lago, costa al rio
+Tipo de piso: Alfombra, Baldosa, Goma, Parquet, Vinilo, Pinotea, Ceramicos y Baldosas, Madera, Ceramicos, Flotante y ceramicos, Porcelanato, Roble Eslavonia
+Estado: Excelente, Muy Bueno, Bueno, Regular, A refaccionar 
+
+AMBIENTES DE LA CASA (titulo)
+Altillo, ANTECOCINA, antesala, AZOTEA, baño, bar, baulera, biblioteca, BODEGA, cochera, CUARTO DE HERRAMIENTAS, cuarto de planchar, dependencia, DEPENDENCIADE SERVICIO, DORMITORIO, entrepiso, ESTUDIO, family room, FONDO LIBRE, GALERIA, GALPON, GARAGE, JARDIN FONDO, JARDIN FRENTE, LOCAL, OFICINA, PALIER, SALA, sotano, suite, VESTIBULO, vestidor, VESTUARIO
+
+TODO: MEDIDAS DE AMBIENTES (titulo)
+Balcon
+cocina
+comedor diario 
+comedor 
+dormitorio 
+escritorio 
+Hall 
+LAVADERO
+living 
+patio 
+pileta 
+PLAYROOM 
+QUINCHO
+terraza 
+
+INSTALACIONES DE LA CASA 
+ACCESO MOVILIDAD REDUCIDA 
+Agua cloaca 
+Agua corriente 
+aire acondicionado central 
+aire acondicionado individual 
+aire caliente 
+amoblado 
+artefactos de cocina 
+ascensor 
+cable 
+caldera 
+calefaccion 
+calefaccion tiro balanceado 
+calefon 
+CANCHA DE FUTBOL
+CANCHA DE TENIS 
+desayunador 
+electricidad 
+espacio para vehiculos 
+extractor de aire 
+gas envasasdo 
+gas natural 
+HIDROMASAJE 
+hogar a leña 
+losa raidante 
+muebles de cocina 
+PAVIMENTO, 
+PILETA 
+piso radiante central 
+piso raidante individual 
+radiadores
+SOLARIUM  
+termotanque 
+
+SERVICIOS DE LA CASA 
+ABL 
+agua corriente 
+calefaccion 
+conmutador 
+electricidad 
+gas envasado 
+gas natural 
+internet 
+LIMPIEZA 
+refrigeracion 
+rentas 
+ROPA DE CAMA 
+seguridad 
+telefono 
+TOALLAS 
+videocable 
+vigilancia 
+
+GENERALES DE LA CASA 
+Acepta seguro de caucion 
+Permite mascotas 
+
+
+
+
+
 ----------------------------------
 3. HOJA 3 - TIPO DE AVISO 
 ----------------------------------

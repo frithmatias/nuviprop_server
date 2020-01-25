@@ -1,14 +1,75 @@
-var formModel = require('../models/form.model');
 
-function getForm(req, res) {
+var Controls = require('../models/controls.model');
+var ControlsData = require('../models/controls_data.model');
+var FormModel = require('../models/forms.model');
+function setFormControls(req, res) {
+    var tipooperacion = req.body.tipooperacion;
+    var tipoinmueble = req.body.tipoinmueble;
+    var controls = req.body.controls;
+    FormModel.find({ 'tipooperacion': tipooperacion, 'tipoinmueble': tipoinmueble }).exec((err, formulario) => {
+        // LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
+        formulario = formulario[0];
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error cargando el formulario',
+                errors: err
+            });
+        }
 
-    var id = req.params.id;
-    console.log('id:', id);
 
-    formModel.find({ 'name': id })
+        if (!formulario) {
+            // Si no existe formulario, se crea uno nuevo.
+            formulario = new FormModel({
+                tipooperacion,
+                tipoinmueble,
+                controls
+            })
+
+            // return res.status(204).json({
+            //     ok: false,
+            //     mensaje: 'No existía el formulario para las opciones solicitadas, pero fue creado.',
+            //     errors: err
+            // });
+        } else {
+            // Si existe, se modifican sus propiedades.
+            formulario.tipooperacion = tipooperacion;
+            formulario.tipoinmueble = tipoinmueble;
+            formulario.controls = controls;
+
+        }
+        console.log(req.body);
+
+        // Si no existe el formulario, guarda uno nuevo
+        // formulario = {
+        //     tipooperacion: req.body.tipooperacion,
+        //     tipoinmueble: req.body.tipoinmueble,
+        //     controls: req.body.controls
+        // }
+        formulario.save((err, formularioGuardado) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: "Error guardando el formulario"
+                });
+            }
+
+            res.status(201).json({
+                ok: true,
+                mensaje: "Formulario guardado correctamente.",
+                form: formularioGuardado
+            });
+        });
+    });
+}
+
+function getAllControls(req, res) {
+
+    Controls.find({})
+        // LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
         .exec(
-            (err, form) => {
-                console.log(form);
+            (err, controls) => {
+
                 if (err) {
                     return res.status(500).json({
                         ok: false,
@@ -17,24 +78,86 @@ function getForm(req, res) {
                     });
                 }
 
-                if (form == "") {
+                if (controls == "") {
                     return res.status(400).json({
                         ok: false,
-                        mensaje: 'No existe el formulario',
+                        mensaje: 'No existe formulario para las opciones solicitadas.',
                         errors: err
                     });
                 }
 
-                formModel.countDocuments({}, (err, conteo) => {
 
+                // LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
+
+                ControlsData.find({}).exec((err, options) => {
+                    controls.forEach(control => {
+                        // inserto la propiedad 'options' en cada 'control'
+                        if (control.type === 'select') {
+                            control.options = options.filter(option => {
+                                return control._id.toString() === option.control;
+                            });
+                        }
+                    })
+                    console.log(controls);
                     res.status(200).json({
                         ok: true,
-                        form: form,
-                        total: conteo
+                        controls: controls
                     });
-                });
+                })
+
+
 
             });
 }
 
-module.exports = { getForm };
+function getFormDetalles(req, res) {
+
+    var tipooperacion = req.params.tipooperacion;
+    var tipoinmueble = req.params.tipoinmueble;
+    console.log('tipooperacion', tipooperacion, ' tipoinmueble ', tipoinmueble);
+    FormModel.find({ 'tipooperacion': tipooperacion, 'tipoinmueble': tipoinmueble }).lean().exec((err, form) => {
+        // LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
+        console.log('PASO1:', form);
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error cargando el formulario'
+            });
+        }
+
+        if (!form) {
+            return res.status(204).json({
+                ok: false,
+                mensaje: 'No existe formulario para las opciones solicitadas.',
+                form: []
+            });
+        }
+
+        res.status(200).json({
+            ok: true,
+            form: form
+        });
+        // Controls.find({ _id: { $in: form[0].controls } }).lean().exec((err, controls) => {
+        //     console.log('PASO2:', controls);
+        //     // LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
+        //     ControlsData.find({}).lean().exec((err, options) => {
+        //         controls.forEach(control => {
+        //             // inserto la propiedad 'options' en cada 'control'
+        //             if (control.type === 'select') {
+        //                 control.options = options.filter(option => {
+        //                     return control._id.toString() === option.control;
+        //                 });
+        //                 console.log(control.options);
+        //                 res.status(200).json({
+        //                     ok: true,
+        //                     controls: controls
+        //                 });
+        //             }
+        //         })
+        //     })
+        // })
+
+    });
+}
+
+module.exports = { setFormControls, getAllControls, getFormDetalles };

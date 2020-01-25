@@ -8,6 +8,8 @@ var FormsController = require('../controllers/forms.controller');
 var mdAuth = require('../middlewares/auth.middleware');
 
 // Rutas
-app.get('/:id', FormsController.getForm);
+app.get('/:tipooperacion/:tipoinmueble', FormsController.getFormDetalles);
+app.get('/getallcontrols', [mdAuth.verificaToken, mdAuth.canUpdate], FormsController.getAllControls);
+app.put('/setformcontrols', [mdAuth.verificaToken, mdAuth.canUpdate], FormsController.setFormControls);
 
 module.exports = app;
