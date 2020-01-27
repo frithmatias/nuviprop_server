@@ -140,6 +140,44 @@ function getMisAvisos(req, res) {
     });
 }
 
+function getMisFavoritos(req, res){
+  // ?pagina=n
+  var pagina = req.query.pagina || 0;
+  pagina = Number(pagina);
+  var desde = pagina * 20;
+  
+  // &avisos=[]
+  var avisos = req.query.avisos || '';
+  var arrAvisos = avisos.split(',');
+  console.log('Favoritos:', arrAvisos);
+ 
+  AvisoModel.find({ '_id': { $in: arrAvisos } })
+    .populate('tipooperacion')
+    .populate('tipoinmueble')
+    .populate('tipounidad')
+    .populate('localidad')
+    .skip(desde)
+    .limit(20)
+    .exec((err, avisos) => {
+      if (err) {
+        return res.status(500).json({
+          // ERROR DE BASE DE DATOS
+          ok: false,
+          mensaje: "Error cargando aviso",
+          errors: err
+        });
+      }
+      AvisoModel.count({}, (err, cantidad) => {
+        res.status(200).json({
+          ok: true,
+          mensaje: "Peticion GET de avisos realizada correctamente.",
+          avisos: avisos,
+          total: cantidad
+        });
+      });
+    });
+}
+
 function getAvisosActive(req, res) {
   // desde es una variable que utilizo para decile desde donde empiece a traer registros,
   // y desde ahí me traiga los siguientes 5 registros.
@@ -625,6 +663,7 @@ function updateDetails(req, res) {
 module.exports = {
   getAvisosCriteria,
   getMisAvisos,
+  getMisFavoritos,
   getAvisosActive,
   getAviso,
   createAviso,

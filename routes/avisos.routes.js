@@ -10,6 +10,7 @@ var mdAuth = require("../middlewares/auth.middleware");
 // Avisos
 app.get("/", avisoController.getAvisosActive);
 app.get("/misavisos/:uid", [mdAuth.verificaToken], avisoController.getMisAvisos);
+app.get("/misfavoritos", [mdAuth.verificaToken], avisoController.getMisFavoritos);
 app.get('/:operacion?/:inmueble?/:localidad/:pagina', avisoController.getAvisosCriteria);
 // Aviso
 app.get("/:id", avisoController.getAviso);
