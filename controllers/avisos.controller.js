@@ -8,9 +8,12 @@ var path = require("path");
 // http://localhost:3000/aviso
 
 function getAvisosCriteria(req, res) {
-  // desde es una variable que utilizo para decile desde donde empiece a traer registros,
-  // y desde ahí me traiga los siguientes 5 registros.
-  // http://localhost:3000/aviso?desde=10
+  // http://localhost:3000
+  //     /avisos
+  //     /5e04b4bd3cb7d5a2401c9895-5e04b4ce3cb7d5a2401c98a5
+  //     /5e04bf7a3cb7d5a2401c9b15-5e04bfa73cb7d5a2401c9b30-5e04bfb93cb7d5a2401c9b38-5e04bfbf3cb7d5a2401c9b3e-5e04bfc53cb7d5a2401c9b45
+  //     /5df2eb5664b1fc02b5e1fdef
+  //     /0
 
   // REQ.BODY -> lo que viene en el body puede ser un objeto 
   // REQ.PARAMS -> lo que viene como parámetros en la URL (aviso/5e0826513392d12ca077e925)
@@ -48,39 +51,30 @@ function getAvisosCriteria(req, res) {
 
   //Aviso.find({a, 'nombre email img role')
   const aggregate = AvisoModel.aggregate([
-    // db.avisos.aggregate([{
-    //     $addFields:
-    //     {
-    //         "localidad": { $toLower: "$localidad.nombre" },
-    //         "tipoinmueble": { $toLower: "$tipoinmueble.id" },
-    //         "tipooperacion": { $toLower: "$tipooperacion.id" },
-
-    //     }
-    // }, 
-    // {
-
-
     // Convierto los ObjectId("5e04b4bd3cb7d5a2401c9895")}) a String "5e04b4bd3cb7d5a2401c9895"
     // La función inversa es $toObjectId -> {$toObjectId: "5ab9cbfa31c2ab715d42129e"}
-    {
-      $addFields:
+    {$addFields:
       {
         "localidad": { $toString: "$localidad" },
         "tipoinmueble": { $toString: "$tipoinmueble" },
-        "tipooperacion": { $toString: "$tipooperacion" },
-
+        "tipooperacion": { $toString: "$tipooperacion" }
       }
     },
-    {
-      $match: {
+    {$match: {
         $and: [
           { "tipooperacion": { $in: operaciones } },
           { "tipoinmueble": { $in: inmuebles } },
           { "localidad": { $in: localidades } }
         ]
       }
-    }])
-
+    }
+    // ,
+    // {$lookup: { //like populate
+    //     from: ''
+    //   }
+    // }
+  
+  ])
     .skip(desde)
     .limit(20)
     .exec((err, avisos) => {
@@ -104,7 +98,6 @@ function getAvisosCriteria(req, res) {
         // En standar ES6 no haría falta definir avisos: avisos porque es como redundante,
         // pero lo vamos a dejar así para que sea mas claro.
       });
-
     });
 }
 
@@ -268,28 +261,28 @@ function getAviso(req, res) {
 
 function createAviso(req, res) {
   var body = req.body;
-
+console.log(req.body);
   var aviso = new AvisoModel({
-    calle: body.calle,
-    altura: body.altura,
-    piso: body.piso,
-    depto: body.depto,
-    titulo: body.titulo,
-    descripcion: body.descripcion,
-    precio: body.precio,
-    tipocambio: body.tipocambio,
-    nopublicarprecio: body.nopublicarprecio,
-    aptocredito: body.aptocredito,
-    codigopostal: body.codigopostal,
+    calle:  body.calle,
+    altura:  body.altura,
+    piso:  body.piso,
+    depto:  body.depto,
+    titulo:  body.titulo,
+    descripcion:  body.descripcion,
+    precio:  body.precio,
+    tipocambio:  body.tipocambio,
+    publicarprecio:  body.publicarprecio,
+    aptocredito:  body.aptocredito,
+    codigopostal:  body.codigopostal,
+    localidad:  body.localidad,
+    coords:  {'lat': body.lat, 'lng': body.lng},
+    tipooperacion:  body.tipooperacion,
+    tipoinmueble:  body.tipoinmueble,
+    tipounidad:  body.tipounidad,
+    usuario:  req.usuario._id,
+
     imgs: [],
     activo: false,
-
-    // _id to populate
-    tipoinmueble: body.tipoinmueble,
-    tipounidad: body.tipounidad,
-    tipooperacion: body.tipooperacion,
-    localidad: body.localidad,
-    usuario: req.usuario._id
   });
 
   aviso.save((err, avisoGuardada) => {
@@ -350,20 +343,18 @@ function updateAviso(req, res) {
     aviso.altura = body.altura;
     aviso.piso = body.piso;
     aviso.depto = body.depto;
-    aviso.tipoinmueble = body.tipoinmueble;
-    aviso.tipounidad = body.tipounidad;
-    aviso.tipooperacion = body.tipooperacion;
     aviso.titulo = body.titulo;
     aviso.descripcion = body.descripcion;
     aviso.precio = body.precio;
     aviso.tipocambio = body.tipocambio;
-    aviso.nopublicarprecio = body.nopublicarprecio;
+    aviso.publicarprecio = body.publicarprecio;
     aviso.aptocredito = body.aptocredito;
-    aviso.provincia = body.provincia;
-    aviso.departamento = body.departamento;
-    aviso.localidad = body.localidad;
-    aviso.coords = body.coords;
     aviso.codigopostal = body.codigopostal;
+    aviso.localidad = body.localidad;
+    aviso.coords = {'lat': body.coords.lat, 'lng': body.coords.lng};
+    aviso.tipoinmueble = body.tipoinmueble;
+    aviso.tipounidad = body.tipounidad;
+    aviso.tipooperacion = body.tipooperacion;
     aviso.usuario = req.usuario._id,
       // aviso.inmobiliaria = body.inmobiliaria;
       aviso.save((err, avisoGuardada) => {

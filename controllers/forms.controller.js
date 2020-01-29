@@ -140,7 +140,7 @@ function getFormControlsAndData(req, res) {
             });
         }
 
-        if (!form) {
+        if (form.length === 0) {
             return res.status(204).json({
                 ok: false,
                 mensaje: 'No existe formulario para las opciones solicitadas.',
