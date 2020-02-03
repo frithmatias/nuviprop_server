@@ -38,10 +38,6 @@ function getAvisosCriteria(req, res) {
   var desde = pagina * 20;
   var query = {};
 
-  console.log('operaciones: ', operaciones);
-  console.log('inmuebles: ', inmuebles);
-  console.log('localidades: ', localidades);
-
   if ((operacion === 'undefined') || (inmueble === 'undefined') || (localidades === 'undefined')) {
     return res.status(400).json({
       // ERROR DE BASE DE DATOS
@@ -153,7 +149,6 @@ function getMisFavoritos(req, res){
   // &avisos=[]
   var avisos = req.query.avisos || '';
   var arrAvisos = avisos.split(',');
-  console.log('Favoritos:', arrAvisos);
  
   AvisoModel.find({ '_id': { $in: arrAvisos } })
     .populate('tipooperacion')
@@ -274,7 +269,6 @@ function createAviso(req, res) {
 
 
   var body = req.body;
-console.log(req.body);
   var aviso = new AvisoModel({
     calle:  body.calle,
     altura:  body.altura,
@@ -352,7 +346,6 @@ function updateAviso(req, res) {
       });
     }
 
-    console.log(body);
     // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el aviso.
     aviso.calle = body.calle;
     aviso.altura = body.altura;
@@ -517,10 +510,7 @@ function deleteAviso(req, res) {
 
     // borro la aviso de la base de datos correctamente, ahora vamos a borrar los archivos subidos.
     var path = `./uploads/avisos/${id}`;
-    console.log('enviando a borrar: ', path);
     var result = FileSystem.deleteFolder(path);
-    console.log(result);
-
 
     res.status(200).json({
       ok: true,

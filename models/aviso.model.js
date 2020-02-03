@@ -18,7 +18,7 @@ var avisoSchema = new Schema(
     codigopostal: { type: String, required: [true, "El dato codigopostal del aviso es necesario"] },
     imgs: [{ type: String, required: false }],
     activo: { type: Boolean, required: [true, "El backend no definio el estado activo/inactivo del aviso"] },
-    destacado: { type: Boolean, required: [true, "No se recibio en el backend si el aviso es de tipo destacado."] },
+    destacado: { type: Boolean, required: [false, "No se recibio en el backend si el aviso es de tipo destacado."] },
 
     localidad: { type: Schema.Types.ObjectId, ref: 'Localidad', required: [true, "El id de la localidad es un campo obligatorio"] },
     coords:  { 

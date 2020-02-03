@@ -26,8 +26,6 @@ function uploadImagen(req, res) {
   }
 
   // Si no se reciben archivos devuelve error
-  // console.log("req:", req.files);
-
   if (!req.files) {
     return res.status(500).json({
       // ERROR DE BASE DE DATOS
@@ -58,10 +56,10 @@ function uploadImagen(req, res) {
   // si no existe la carpeta ej. /uploads/avisos/RtY78GhF24uItRe87ui, la crea
   // crearCarpeta(tipo, id);
   var path = `./uploads/${tipo}/${id}`;
-  console.log('Creando carpeta: ', path);
-  var result = fileSystem.createFolder(path);
+  fileSystem.createFolder(path);
+  
   var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`; // Uso los backticks para hacer un template literal
-  var path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
+  path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
   archivo.mv(path, err => {
     // segundo argumento es un callback, recibe un error (claro que SOLO si se recibe un error).
     if (err) {
@@ -81,7 +79,6 @@ function uploadImagen(req, res) {
 
 function grabarImagenBD(tipo, id, nombreArchivo, res) {
   //usuario 5c75c21b70933c1784cdc8db 5c75c21b70933c1784cdc8db-924.jpg ServerResponse {...}
-  // console.log("data en subirportipo(): ", tipo, id, nombreArchivo);
   if (tipo === "usuarios") {
     UserModel.findById(id, (err, resUserModel) => {
       if (!resUserModel) {
@@ -102,14 +99,12 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
 
       //borro imagen vieja
       if (fs.existsSync(pathViejo)) {
-        console.log("Borrando imagen", pathViejo);
         fs.unlinkSync(pathViejo);
       }
 
       // Modifico la imagen en el objeto del usuario y la guardo en la BD
       resUserModel.img = nombreArchivo;
       resUserModel.save((err, usuarioActualizado) => {
-        console.log("Guardando imagen", pathNuevo);
         usuarioActualizado.password = ":)";
         res.status(200).json({
           ok: true,
@@ -121,7 +116,6 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
   }
 
   if (tipo === "avisos") {
-    console.log('buscando con id ', id)
     AvisoModel.findById(id, (err, resAvisoModel) => {
       if (!resAvisoModel) {
         return res.status(400).json({
@@ -143,18 +137,22 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
       // Si ya existe una imagen subida por ese usuario, la borra.
       // if (fs.existsSync(pathViejo)) {
       //   //if(fs.statSync(pathViejo).isFile()){
-      //   console.log("Borrando imagen", pathViejo);
       //   fs.unlinkSync(pathViejo);
       // }
 
-      // console.log('resAvisoModel', resAvisoModel);
       if (typeof resAvisoModel.imgs === 'undefined') {
         resAvisoModel.imgs = [];
       }
-
       resAvisoModel.imgs.push(nombreArchivo);
       resAvisoModel.save((err, avisoActualizado) => {
-        // console.log("Guardando imagen", pathNuevo);
+        if (err) {
+          return res.status(500).json({
+            // ERROR DE BASE DE DATOS
+            ok: false,
+            mensaje: "Error, se pudo guardar en nuevo archivo en la DB.",
+            errors: err
+          });
+        }
         res.status(200).json({
           ok: true,
           mensaje: "Imagenes de la prpiedad actualizadas correctamente",
@@ -184,13 +182,11 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
 
       //borro imagen vieja
       if (fs.existsSync(pathViejo)) {
-        console.log("Borrando imagen", pathViejo);
         fs.unlinkSync(pathViejo);
       }
       // guardo el nombre de la imagen nueva en la bbdd
       resInmoModel.img = nombreArchivo;
       resInmoModel.save((err, inmoActualizada) => {
-        // console.log("Guardando imagen", pathNuevo);
         res.status(200).json({
           ok: true,
           mensaje: "Imagen de la inmobiliaria actualizada correctamente",
@@ -255,7 +251,6 @@ function deleteImagen(req, res) {
 
       // vuelvo a guardar el objeto sin ese archivo
       resAvisoModel.save((err, avisoActualizado) => {
-        // console.log("Guardando imagen", pathNuevo);
         res.status(200).json({
           ok: true,
           mensaje: "Se elimino de la BD la imagen: " + filename,
