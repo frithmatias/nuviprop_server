@@ -8,6 +8,7 @@ var path = require("path");
 // http://localhost:3000/aviso
 
 function getAvisosCriteria(req, res) {
+
   // http://localhost:3000
   //     /avisos
   //     /5e04b4bd3cb7d5a2401c9895-5e04b4ce3cb7d5a2401c98a5
@@ -41,7 +42,7 @@ function getAvisosCriteria(req, res) {
   console.log('inmuebles: ', inmuebles);
   console.log('localidades: ', localidades);
 
-  if ((operacion === 'undefined') || (inmueble === 'undefined')) {
+  if ((operacion === 'undefined') || (inmueble === 'undefined') || (localidades === 'undefined')) {
     return res.status(400).json({
       // ERROR DE BASE DE DATOS
       ok: false,
@@ -50,54 +51,63 @@ function getAvisosCriteria(req, res) {
   }
 
   //Aviso.find({a, 'nombre email img role')
-  const aggregate = AvisoModel.aggregate([
+  AvisoModel.aggregate([
     // Convierto los ObjectId("5e04b4bd3cb7d5a2401c9895")}) a String "5e04b4bd3cb7d5a2401c9895"
     // La función inversa es $toObjectId -> {$toObjectId: "5ab9cbfa31c2ab715d42129e"}
-    {$addFields:
-      {
-        "localidad": { $toString: "$localidad" },
-        "tipoinmueble": { $toString: "$tipoinmueble" },
-        "tipooperacion": { $toString: "$tipooperacion" }
-      }
-    },
+    {$addFields: {
+        "localidad_id": { $toString: "$localidad" },
+        "tipoinmueble_id": { $toString: "$tipoinmueble" },
+        "tipooperacion_id": { $toString: "$tipooperacion" }
+    }},
+    
     {$match: {
         $and: [
-          { "tipooperacion": { $in: operaciones } },
-          { "tipoinmueble": { $in: inmuebles } },
-          { "localidad": { $in: localidades } }
+          { "tipooperacion_id": { $in: operaciones } },
+          { "tipoinmueble_id": { $in: inmuebles } },
+          { "localidad_id": { $in: localidades } }
         ]
-      }
-    }
-    // ,
-    // {$lookup: { //like populate
-    //     from: ''
-    //   }
-    // }
-  
+    }},
+
+    // para obtener un sólo elemento dentro de un array
+    // {$project: { 
+    //       "localidad": { "$arrayElemAt": [ "$localidad", 0 ] }            
+    // }},
+
+    
+    {$lookup: { from: 'localidades', localField: 'localidad', foreignField: '_id', as: 'localidad' }},
+    {$lookup: { from: 'avisos_tipooperacion', localField: 'tipooperacion', foreignField: '_id', as: 'tipooperacion' }},
+    {$lookup: { from: 'avisos_tipoinmueble', localField: 'tipoinmueble', foreignField: '_id', as: 'tipoinmueble' }},
+    {$lookup: { from: 'avisos_tipocambio', localField: 'tipocambio', foreignField: '_id', as: 'tipocambio' }},
+
+    // Los campos relacionados con lookup (join) obtienen un array del objeto deseado, para hacer un deconstruct uso unwind. 
+    {$unwind: "$localidad" },
+    {$unwind: "$tipooperacion" },
+    {$unwind: "$tipoinmueble" },
+    {$unwind: "$tipocambio" }
   ])
     .skip(desde)
     .limit(20)
     .exec((err, avisos) => {
-      // el segundo argumento es un callback (err, avisos) =>
-
       if (err) {
         return res.status(500).json({
           // ERROR DE BASE DE DATOS
           ok: false,
-          mensaje: "Error cargando aviso",
+          mensaje: "Error cargando avisos",
           errors: err
         });
       }
-      console.log('RESPUESTA:', avisos);
+      // el segundo argumento es un callback (err, avisos) =>
 
-      res.status(200).json({
-        ok: true,
-        mensaje: "Peticion GET de avisos realizada correctamente.",
-        avisos: avisos,
-        total: avisos.length
-        // En standar ES6 no haría falta definir avisos: avisos porque es como redundante,
-        // pero lo vamos a dejar así para que sea mas claro.
-      });
+
+        res.status(200).json({
+          ok: true,
+          mensaje: "Peticion GET de avisos realizada correctamente.",
+          avisos: avisos,
+          total: avisos.length
+          // En standar ES6 no haría falta definir avisos: avisos porque es como redundante,
+          // pero lo vamos a dejar así para que sea mas claro.
+        });
+
     });
 }
 
@@ -110,6 +120,7 @@ function getMisAvisos(req, res) {
     .populate('tipooperacion')
     .populate('tipoinmueble')
     .populate('tipounidad')
+    .populate('tipocambio')
     .populate('localidad')
     .skip(desde)
     .limit(20)
@@ -260,6 +271,8 @@ function getAviso(req, res) {
 }
 
 function createAviso(req, res) {
+
+
   var body = req.body;
 console.log(req.body);
   var aviso = new AvisoModel({
@@ -274,15 +287,17 @@ console.log(req.body);
     publicarprecio:  body.publicarprecio,
     aptocredito:  body.aptocredito,
     codigopostal:  body.codigopostal,
-    localidad:  body.localidad,
-    coords:  {'lat': body.lat, 'lng': body.lng},
+    activo: false,
+    destacado: false,
+
     tipooperacion:  body.tipooperacion,
     tipoinmueble:  body.tipoinmueble,
     tipounidad:  body.tipounidad,
+    localidad:  body.localidad,
+    coords:  {'lat': body.lat, 'lng': body.lng},
     usuario:  req.usuario._id,
 
     imgs: [],
-    activo: false,
   });
 
   aviso.save((err, avisoGuardada) => {
@@ -350,11 +365,12 @@ function updateAviso(req, res) {
     aviso.publicarprecio = body.publicarprecio;
     aviso.aptocredito = body.aptocredito;
     aviso.codigopostal = body.codigopostal;
-    aviso.localidad = body.localidad;
-    aviso.coords = {'lat': body.coords.lat, 'lng': body.coords.lng};
+    aviso.tipooperacion = body.tipooperacion;
+    // activo y destacado no son datos actualizables
     aviso.tipoinmueble = body.tipoinmueble;
     aviso.tipounidad = body.tipounidad;
-    aviso.tipooperacion = body.tipooperacion;
+    aviso.localidad = body.localidad;
+    aviso.coords = {'lat': body.lat, 'lng': body.lng};
     aviso.usuario = req.usuario._id,
       // aviso.inmobiliaria = body.inmobiliaria;
       aviso.save((err, avisoGuardada) => {
@@ -424,6 +440,54 @@ function pausedAviso(req, res) {
         ok: true,
         mensaje: 'La aviso se ' + msg + ' correctamente',
         aviso: avisoActivada
+      });
+    });
+  });
+}
+
+function destacarAviso(req, res) {
+  var id = req.params.id;
+
+  AvisoModel.findById(id, (err, aviso) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: "Error al buscar la aviso",
+        errors: err
+      });
+    }
+
+    if (!aviso) {
+      return res.status(400).json({
+        // Podría ser 400, Bad request (no encontro el aviso)
+        ok: false,
+        mensaje: "No existe la aviso con el id " + id,
+        errors: { message: "No existe aviso con el id solicitado" }
+      });
+    }
+
+    (aviso.destacado) ? aviso.destacado = false : aviso.destacado = true;
+
+    // aviso.activo = true;
+
+    aviso.save((err, avisoDestacado) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Error al activar la aviso",
+          errors: err
+        });
+      }
+
+      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
+      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
+      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con aviso.save().
+      var msg = '';
+      avisoDestacado.destacado ? msg = '' : msg = 'NO';
+      res.status(200).json({
+        ok: true,
+        mensaje: 'Aviso ' + msg + ' destacado.',
+        aviso: avisoDestacado
       });
     });
   });
@@ -661,6 +725,7 @@ module.exports = {
   updateAviso,
   deleteAviso,
   pausedAviso,
+  destacarAviso,
   createDetails,
   updateDetails
 };
