@@ -123,11 +123,11 @@ mongoose
   });
 
 
-
+  const port = process.env.PORT || 3000;
 // Escuchar peticiones
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log(
-    "Express Server corriendo en el puerto 3000: \x1b[32m%s\x1b[0m",
+    "Express Server corriendo en el puerto " + port + ": \x1b[32m%s\x1b[0m",
     "ONLINE"
   );
 });
