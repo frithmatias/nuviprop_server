@@ -124,12 +124,6 @@ mongoose
     throw err;
   });
 
-// ATLAS API Key: 
-// PRIVATE: e0609cf0-e9eb-4acd-9c35-e0b0751781d5
-// PUBLIC: xnrfrylg
-// NUVIPROP Project ID: 5e2e5780d5ec131680db8ecf
-// mongo "mongodb+srv://cluster0-7xhfj.gcp.mongodb.net/inMob" --username matias
-
 
 // ==================================================
 // Inicializar el servidor puerto 3000
