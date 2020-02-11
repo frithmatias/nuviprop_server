@@ -110,12 +110,13 @@ app.use("/inicio", inicioRoutes);
 // ==================================================
 // Conexión a la base de datos.
 // ==================================================
+const connectionString = '***REMOVED***';
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose
   // .connect('***REMOVED***', { useNewUrlParser: true })
-  .connect('mongodb+srv://matias:Matt2707@cluster0-7xhfj.gcp.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true })
+   .connect(connectionString, { useNewUrlParser: true })
   .then(() => {
     console.log('MongoDB corriendo en el puerto 27017: \x1b[32m%s\x1b[0m', 'ONLINE');
   })
@@ -123,8 +124,17 @@ mongoose
     throw err;
   });
 
+// ATLAS API Key: 
+// PRIVATE: e0609cf0-e9eb-4acd-9c35-e0b0751781d5
+// PUBLIC: xnrfrylg
+// NUVIPROP Project ID: 5e2e5780d5ec131680db8ecf
+// mongo "mongodb+srv://cluster0-7xhfj.gcp.mongodb.net/inMob" --username matias
 
-  const port = process.env.PORT || 3000;
+
+// ==================================================
+// Inicializar el servidor puerto 3000
+// ==================================================
+const port = process.env.PORT || 3000;
 // Escuchar peticiones
 app.listen(port, () => {
   console.log(

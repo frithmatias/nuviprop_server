@@ -13,13 +13,10 @@ function prueba(req, res) {
 }
 
 function getOperaciones(req, res) {
-
-
-
-    tipoOperacion.find({})
-        .exec(
+    tipoOperacion.find({},
             (err, operaciones) => {
-
+            console.log(operaciones);
+            console.log(err);
                 if (err) {
                     return res.status(500).json({
                         ok: false,
@@ -27,16 +24,13 @@ function getOperaciones(req, res) {
                         errors: err
                     });
                 }
-
                 tipoOperacion.countDocuments({}, (err, conteo) => {
-
                     res.status(200).json({
                         ok: true,
                         operaciones: operaciones,
                         total: conteo
                     });
                 });
-
             });
 }
 
