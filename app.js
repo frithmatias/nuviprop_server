@@ -114,7 +114,8 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose
-  .connect('***REMOVED***', { useNewUrlParser: true })
+  // .connect('***REMOVED***', { useNewUrlParser: true })
+  .connect('mongodb+srv://matias:Matt2707@cluster0-7xhfj.gcp.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true })
   .then(() => {
     console.log('MongoDB corriendo en el puerto 27017: \x1b[32m%s\x1b[0m', 'ONLINE');
   })
