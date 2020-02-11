@@ -8,6 +8,7 @@ var inicioController = require('../controllers/inicio.controller');
 var mdAuth = require('../middlewares/auth.middleware');
 
 // Form Avisos
+app.get('/prueba', inicioController.prueba);
 app.get('/operaciones', inicioController.getOperaciones);
 app.get('/inmuebles', inicioController.getInmuebles);
 app.get('/unidades/:idparent', inicioController.getUnidades);

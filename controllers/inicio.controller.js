@@ -4,6 +4,14 @@ var tipoUnidad = require('../models/aviso_tipounidad.model');
 var tipoCambio = require('../models/aviso_tipocambio.model');
 var provinciaModel = require('../models/aviso_provincia.model');
 var localidadModel = require('../models/localidad.model');
+
+function prueba(req, res) {
+    res.status(200).json({
+        ok: true,
+        resp: 'Express Server corriendo.'
+    });
+}
+
 function getOperaciones(req, res) {
 
 
@@ -193,6 +201,7 @@ function getLocalidaesEnDepartamento(req, res) {
 
 }
 module.exports = {
+    prueba,
     getOperaciones,
     getInmuebles,
     getUnidades,
