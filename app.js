@@ -114,9 +114,10 @@ const connectionString = '***REMOVED***';
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
+mongoose.set('useNewUrlParser', true);
 mongoose
   // .connect('***REMOVED***', { useNewUrlParser: true })
-   .connect(connectionString, { useNewUrlParser: true })
+  .connect(connectionString, { useNewUrlParser: true }, err => err ? console.log(err) : console.log('ok'))
   .then(() => {
     console.log('MongoDB corriendo en el puerto 27017: \x1b[32m%s\x1b[0m', 'ONLINE');
   })

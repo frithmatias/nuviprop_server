@@ -14,6 +14,7 @@ app.put('/addfavourite/:userid', mdAuth.verificaToken, UserController.addFavouri
 
 // Admin
 app.put('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], UserController.updateUser); //put o patch
+app.get('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], UserController.readUser);
 app.delete('/:id', [mdAuth.verificaToken, mdAuth.canUpdate], UserController.deleteUser);
 
 module.exports = app;
