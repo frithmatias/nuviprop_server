@@ -240,12 +240,12 @@ function obtenerMenu(ROLE) {
       titulo: "Usuario",
       icono: "mdi mdi-account-circle",
       submenu: [
-        { titulo: "Mi Perfil", url: "/profile", icono: "mdi text-primary mdi-face" },
-        { titulo: "Tema", url: "/account-settings", icono: "mdi text-primary mdi-format-color-fill" },
-        { titulo: "Nuevo Aviso", url: "/aviso-crear/nuevo", icono: "mdi text-primary mdi-plus-circle-outline" },
-        { titulo: "Mis Favoritos", url: "/favoritos", icono: "mdi text-primary mdi-heart" },
-        { titulo: "Mis Avisos", url: "/misavisos", icono: "mdi text-primary mdi-city" },
-        { titulo: "Mis Busquedas", url: "/busquedas", icono: "mdi text-primary mdi-search-web" },
+        { titulo: "Mi Perfil", url: "/profile", icono: "mdi mdi-face" },
+        { titulo: "Tema", url: "/account-settings", icono: "mdi mdi-format-color-fill" },
+        { titulo: "Nuevo Aviso", url: "/aviso-crear/nuevo", icono: "mdi mdi-plus-circle-outline" },
+        { titulo: "Mis Favoritos", url: "/favoritos", icono: "mdi mdi-heart" },
+        { titulo: "Mis Avisos", url: "/misavisos", icono: "mdi mdi-city" },
+        { titulo: "Mis Busquedas", url: "/busquedas", icono: "mdi mdi-search-web" },
       ]
     }
   ];
@@ -255,9 +255,9 @@ function obtenerMenu(ROLE) {
       titulo: "Administracion",
       icono: "mdi mdi-settings",
       submenu: [
-        { titulo: "Usuarios", url: "/usuarios", icono: "mdi text-primary mdi-account-multiple-plus" },
-        { titulo: "Inmobiliarias", url: "/inmobiliarias", icono: "mdi text-primary mdi-city" },
-        { titulo: "Formularios", url: "/forms", icono: "mdi text-primary mdi-table-large" }
+        { titulo: "Usuarios", url: "/usuarios", icono: "mdi mdi-account-multiple-plus" },
+        { titulo: "Inmobiliarias", url: "/inmobiliarias", icono: "mdi mdi-city" },
+        { titulo: "Formularios", url: "/forms", icono: "mdi mdi-table-large" }
       ]
     }); // unshift lo coloca al princio del array, push lo coloca al final.
   }
