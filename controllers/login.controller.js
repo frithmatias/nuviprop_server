@@ -257,7 +257,9 @@ function obtenerMenu(ROLE) {
       submenu: [
         { titulo: "Usuarios", url: "/usuarios", icono: "mdi mdi-account-multiple-plus" },
         { titulo: "Inmobiliarias", url: "/inmobiliarias", icono: "mdi mdi-city" },
-        { titulo: "Formularios", url: "/forms", icono: "mdi mdi-table-large" }
+        { titulo: "Formularios", url: "/forms", icono: "mdi mdi-table-large" },
+        { titulo: "Controles", url: "/controles", icono: "mdi mdi-console" }
+
       ]
     }); // unshift lo coloca al princio del array, push lo coloca al final.
   }
