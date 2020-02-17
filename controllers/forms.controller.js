@@ -2,55 +2,7 @@ var ControlModel = require('../models/control.model');
 var ControlData = require('../models/control_data.model');
 var FormModel = require('../models/forms.model');
 
-function createControl(req, res) {
-	var body = req.body;
 
-	var control = new ControlModel({
-		nombre: body.nombre,
-		id: body.id,
-		type: body.type,
-		required: body.required
-	});
-	console.log(control);
-
-
-	control.save((err, controlsaved) => {
-
-		if (err) {
-			return res.status(500).json({
-				ok: false,
-				mensaje: 'Error guardando el control',
-				errors: err
-			});
-		}
-		
-		if(body.opciones){
-			body.opciones.forEach(opcion => {
-				console.log(opcion);
-				var guardaropcion = new ControlData({
-					control: controlsaved._id,
-					nombre: opcion
-				});
-	
-				guardaropcion.save((err, opcionguardada) => {
-					if (err) {
-						return res.status(500).json({
-							ok: false,
-							mensaje: 'Se guardo el control, pero hubo problemas al guardar las opciones.',
-							errors: err
-						});
-					}
-				});
-			});
-		}
-
-		res.status(201).json({
-			ok: true,
-			mensaje: "Control guardado correctamente.",
-			control: controlsaved
-		});
-	});
-}
 
 function setFormControls(req, res) {
 	var tipooperacion = req.body.tipooperacion;
@@ -220,4 +172,4 @@ function getFormControlsAndData(req, res) {
 	});
 }
 
-module.exports = { createControl, setFormControls, getAllControls, getFormControls, getFormControlsAndData };
+module.exports = { setFormControls, getAllControls, getFormControls, getFormControlsAndData };

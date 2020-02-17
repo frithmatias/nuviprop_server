@@ -12,6 +12,5 @@ app.get('/getcontrols/:tipooperacion/:tipoinmueble', FormsController.getFormCont
 app.get('/getcontrolsdata/:tipooperacion/:tipoinmueble', FormsController.getFormControlsAndData);
 app.get('/getallcontrols', [mdAuth.verificaToken, mdAuth.canUpdate], FormsController.getAllControls);
 app.put('/setformcontrols', [mdAuth.verificaToken, mdAuth.canUpdate], FormsController.setFormControls);
-app.post('/createcontrol', [mdAuth.verificaToken, mdAuth.canUpdate], FormsController.createControl);
 
 module.exports = app;
