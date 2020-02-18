@@ -51,19 +51,19 @@ app.use(morgan('combined', { stream: accessLogStream }));
 // ==================================================
 // Hay varias maneras de solucionar el problema con los CORS
 // https://enable-cors.org/server_expressjs.html
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://www.nuviprop.com");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, x-token"
-  );
-  res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "https://www.nuviprop.com");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept, x-token"
+//   );
+//   res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+//   next();
+// });
 // O bien instalando cors 
 // $npm install cors 
-// var cors = require("cors");
-// app.use(cors({ origin: true, credentials: true }));
+var cors = require("cors");
+app.use(cors({ origin: true, credentials: true }));
 
 
 
