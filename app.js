@@ -51,19 +51,19 @@ app.use(morgan('combined', { stream: accessLogStream }));
 // ==================================================
 // Hay varias maneras de solucionar el problema con los CORS
 // https://enable-cors.org/server_expressjs.html
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "https://www.nuviprop.com");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, x-token"
-//   );
-//   res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
-//   next();
-// });
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, x-token"
+  );
+  res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+  next();
+});
 // O bien instalando cors 
 // $npm install cors 
-var cors = require("cors");
-app.use(cors({ origin: true, credentials: true }));
+// var cors = require("cors");
+// app.use(cors({ origin: true, credentials: true }));
 
 
 
@@ -116,8 +116,8 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useNewUrlParser', true);
 mongoose
-  .connect('***REMOVED***', { useNewUrlParser: true })
-  //.connect(connectionString, { useNewUrlParser: true }, err => err ? console.log(err) : console.log('ok'))
+  //.connect('***REMOVED***', { useNewUrlParser: true })
+  .connect(connectionString, { useNewUrlParser: true }, err => err ? console.log(err) : console.log('ok'))
   .then(() => {
     console.log('MongoDB corriendo en el puerto 27017: \x1b[32m%s\x1b[0m', 'ONLINE');
   })
