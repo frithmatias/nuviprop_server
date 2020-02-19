@@ -118,20 +118,38 @@ async function loginGoogle(req, res) {
           expiresIn: 14400
         }); // Expira en 4 Horas.
 
-        usuarioDB.password = ":)"; // Por seguridad, no devuelvo el passord (es el encriptado, pero no importa es inseguro iugal).
-        res.status(200).json({
-          ok: true,
-          mensaje: "Login post recibido.",
-          token: token,
-          id: usuarioDB.id,
-          usuario: usuarioDB,
-          menu: obtenerMenu(usuarioDB.role)
+
+        // ======================================================
+        // Actualizo LASTLOGIN 
+        // ======================================================
+        usuarioDB.lastlogin = new Date();
+        usuarioDB.save((err, userLastLogin) => {
+
+          if (err) {
+            res.status(500).json({
+              // ERROR DE BASE DE DATOS
+              ok: false,
+              mensaje: "Error al actualizar la fecha de ultimo login del usuario",
+              error: err
+            });
+          }
+
+          usuarioDB.password = ":)"; // Por seguridad no devuelvo el password
+
+          res.status(200).json({
+            ok: true,
+            mensaje: "Login exitoso.",
+            token: token,
+            id: usuarioDB.id,
+            usuario: usuarioDB,
+            menu: obtenerMenu(usuarioDB.role)
+          });
         });
+
       }
     } else {
       // el usuario no existe, hay que crearlo.
       var usuario = new UserModel();
-
       usuario.email = googleUser.email;
       usuario.nombre = googleUser.nombre;
       usuario.apellido = googleUser.apellido;
@@ -140,6 +158,8 @@ async function loginGoogle(req, res) {
       usuario.password = ":)"; // se va a grabar asi, pero cuando se autentica va a pasar a un hash.
       usuario.img = googleUser.img;
       usuario.google = true;
+      usuario.lastlogin = new Date(); // created se ingresa al instanciar el modelo.
+      usuario.createdat = new Date();
       usuario.save((err, usuarioDB) => {
         if (err) {
         }
@@ -200,6 +220,10 @@ function login(req, res) {
     // EL OBJETO que me devuelve de la base de datos con la info de ese usuario.
     var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 }); // Expira en 4 Horas.
 
+
+    // ======================================================
+    // Actualizo LASTLOGIN 
+    // ======================================================
     usuarioDB.lastlogin = new Date();
     usuarioDB.save((err, usuarioUpdateLoginDate) => {
 
@@ -212,7 +236,9 @@ function login(req, res) {
         });
       }
 
+      // ======================================================
       // una vez que actualizo el login devuelvo la respuesta.
+      // ======================================================
       usuarioDB.password = ":)"; // Por seguridad, no devuelvo el password (es el encriptado, pero no importa es inseguro iugal).
       res.status(200).json({
         ok: true,

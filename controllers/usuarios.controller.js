@@ -16,7 +16,8 @@ function createUser(req, res) {
     nacimiento: body.nacimiento,
     password: bcrypt.hashSync(body.password, 10),
     img: body.img,
-    role: body.role
+    role: body.role,
+    createdat: new Date()
   });
 
   usuario.save((err, usuarioGuardado) => {

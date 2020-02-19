@@ -17,9 +17,8 @@ var usuarioSchema = new Schema({
   role: { type: String, required: false, default: "USER_ROLE", enum: rolesValidos },
   favoritos: { type: [String], required: false },
   google: { type: Boolean, default: false },
-  lastlogin: { type: Date, registered: false },
-  registered: { type: Date, default: new Date()
-  }
+  lastlogin: { type: Date, required: false },
+  createdat: { type: Date, required: false }
 });
 
 usuarioSchema.plugin(uniqueValidator, {
