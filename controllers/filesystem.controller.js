@@ -17,7 +17,6 @@ function deleteFolder(dirPath) {
         if (fs.existsSync(dirPath)) {
             fs.readdirSync(dirPath).forEach((file, index) => {
                 const curPath = [dirPath, file].join('/');
-                console.log('borrando archivo: ', curPath);
                 if (fs.lstatSync(curPath).isDirectory()) { // recurse
                     deleteFolderRecursive(curPath);
                 } else { // delete file
@@ -29,10 +28,8 @@ function deleteFolder(dirPath) {
     };
     deleteFolderRecursive(dirPath);
     if (fs.existsSync(dirPath)) {
-        console.log('No se pudo borrar la carpeta que contiene las imagenes del aviso!');
         return (false);
     } else {
-        console.log('Carpeta borrada correctamente.');
         return (true);
     }
 

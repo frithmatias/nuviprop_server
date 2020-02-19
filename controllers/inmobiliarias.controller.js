@@ -73,12 +73,10 @@ function getInmob(req, res) {
 function createInmob(req, res) {
 
     var body = req.body;
-    console.log(req.body);
     var inmobiliaria = new InmobModel({
         nombre: body.nombre,
         usuario: req.usuario._id //el middleware auth "inyecta" el usuario en req.
     });
-    console.log('INMOB:', inmobiliaria);
     inmobiliaria.save((err, inmobiliariaGuardado) => {
 
         if (err) {

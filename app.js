@@ -116,7 +116,7 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useNewUrlParser', true);
 mongoose
-  //.connect('***REMOVED***', { useNewUrlParser: true })
+  // .connect('***REMOVED***', { useNewUrlParser: true })
   .connect(connectionString, { useNewUrlParser: true }, err => err ? console.log(err) : console.log('ok'))
   .then(() => {
     console.log('MongoDB corriendo en el puerto 27017: \x1b[32m%s\x1b[0m', 'ONLINE');
@@ -132,10 +132,7 @@ mongoose
 const port = process.env.PORT || 3000;
 // Escuchar peticiones
 app.listen(port, () => {
-  console.log(
-    "Express Server corriendo en el puerto " + port + ": \x1b[32m%s\x1b[0m",
-    "ONLINE"
-  );
+  console.log("Express Server corriendo en el puerto " + port + ": \x1b[32m%s\x1b[0m","ONLINE");
 });
 
 /*

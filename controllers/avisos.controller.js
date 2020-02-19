@@ -185,7 +185,7 @@ function getAvisosActive(req, res) {
   pagina = Number(pagina);
   var desde = pagina * 20;
 
-  //Avisoiedad.find({a, 'nombre email img role')
+  //Aviso.find({a, 'nombre email img role')
   AvisoModel.find({ activo: true })
     .populate('tipooperacion')
     .populate('tipoinmueble')
@@ -225,7 +225,7 @@ function getAviso(req, res) {
   // http://localhost:3000/aviso?desde=10
   var id = req.params.id || 0;
 
-  //Avisoiedad.find({a, 'nombre email img role')
+  //Aviso.find({a, 'nombre email img role')
   AvisoModel.findById(id)
     .populate('tipooperacion')
     .populate('tipoinmueble')
@@ -306,7 +306,7 @@ function createAviso(req, res) {
 
     res.status(201).json({
       ok: true,
-      mensaje: "Avisoiedad guardada correctamente.",
+      mensaje: "Aviso guardado correctamente.",
       aviso: avisoGuardada, // USUARIO A GUARDAR
       usuariotoken: req.usuario // USUARIO QUE HIZO LA SOLICITUD
     });
@@ -514,7 +514,7 @@ function deleteAviso(req, res) {
 
     res.status(200).json({
       ok: true,
-      mensaje: "Avisoiedad borrada correctamente.",
+      mensaje: "Aviso borrado correctamente.",
       aviso: avisoBorrado
     });
   });

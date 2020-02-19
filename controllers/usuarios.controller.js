@@ -18,7 +18,7 @@ function createUser(req, res) {
     img: body.img,
     role: body.role
   });
-  console.log('lado servidor', usuario);
+
   usuario.save((err, usuarioGuardado) => {
     if (err) {
       return res.status(400).json({
@@ -119,7 +119,6 @@ function updateUser(req, res) {
 } 
 
 function deleteUser(req, res) {
-  console.log('borrando usuario:', req.params);
   var id = req.params.id;
 
   UserModel.findByIdAndRemove(id, (err, usuarioBorrado) => {
@@ -212,7 +211,6 @@ function addFavourite(req, res) {
         errors: { message: "No existe usuario con el id solicitado" }
       });
     }
-    console.log('IDAVISO ', body.avisoid);
     // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el usuario.
     if (usuario.favoritos.includes(body.avisoid)) {
       // si existe la borra

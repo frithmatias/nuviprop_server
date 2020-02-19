@@ -44,7 +44,6 @@ function updateToken(req, res) {
 // Autenticación Google
 // ==================================================
 async function verify(token) {
-  console.log("Verificando desde VERIFY:", token);
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: GOOGLE_CLIENT_ID // Specify the GOOGLE_CLIENT_ID of the app that accesses the backend
@@ -79,7 +78,6 @@ async function loginGoogle(req, res) {
       });
     });
 
-  console.log("googleUser: ", googleUser);
 
   if (!googleUser) {
     return res.status(500).json({
@@ -90,7 +88,6 @@ async function loginGoogle(req, res) {
 
   // si la promesa no devuelve error busco el usuario en la base de datos.
   UserModel.findOne({ email: googleUser.email }, (err, usuarioDB) => {
-    console.log("Buscando al usuario de GOOGLE en la base de datos...");
     if (err) {
       res.status(500).json({
         // ERROR DE BASE DE DATOS
@@ -103,12 +100,8 @@ async function loginGoogle(req, res) {
     // Si el usuario existe, tengo que saber si fue guardado con autenticación de Google.
     // Para esto tengo que crear un flag en el modelo de datos de usuarios.
     if (usuarioDB) {
-      console.log("El usuario existe..");
-
       if (usuarioDB.google === false) {
-        console.log(
-          "Pero fue ingresado por autenticación normal, debe autenticar normalmente..."
-        );
+        //fue ingresado por autenticación normal, debe autenticar normalmente..."
         return res.status(400).json({
           // Bad Request, el usuario existe, pero fue creado desde la app y no con Login de Google.
           ok: false,
@@ -117,11 +110,9 @@ async function loginGoogle(req, res) {
         });
       } else {
 
-        console.log(
-          "Fue ingresado por autenticación de GOOGLE, hay que generar un nuevo TOKEN..."
-        );
-
-        // Debo reautenticar con Google generando un NUEVO TOKEN, utilizando el mismo metodo que en la autenticación NORMAL.
+        // Fue ingresado por autenticación de GOOGLE, hay que generar un nuevo TOKEN..."
+        // Debo reautenticar con Google generando un NUEVO TOKEN, utilizando el mismo metodo 
+        // que en la autenticación NORMAL.
 
         var token = jwt.sign({ usuario: usuarioDB }, SEED, {
           expiresIn: 14400
@@ -138,8 +129,6 @@ async function loginGoogle(req, res) {
         });
       }
     } else {
-      console.log("el usuario no existe, hay que crearlo");
-
       // el usuario no existe, hay que crearlo.
       var usuario = new UserModel();
 
@@ -151,15 +140,12 @@ async function loginGoogle(req, res) {
       usuario.password = ":)"; // se va a grabar asi, pero cuando se autentica va a pasar a un hash.
       usuario.img = googleUser.img;
       usuario.google = true;
-      console.log("Nuevo objeto usuario", usuario);
       usuario.save((err, usuarioDB) => {
         if (err) {
-          console.log(err);
         }
         var token = jwt.sign({ usuario: usuarioDB }, SEED, {
           expiresIn: 14400
         }); // Expira en 4 Horas.
-        console.log("Nuevo usuario creado", usuarioDB);
         res.status(200).json({
           ok: true,
           token: token,
@@ -179,8 +165,6 @@ async function loginGoogle(req, res) {
 
 function login(req, res) {
   var body = req.body;
-  console.log(body);
-
   UserModel.findOne({ email: body.email }, (err, usuarioDB) => {
     if (err) {
       return res.status(500).json({
@@ -216,16 +200,34 @@ function login(req, res) {
     // EL OBJETO que me devuelve de la base de datos con la info de ese usuario.
     var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 }); // Expira en 4 Horas.
 
-    usuarioDB.password = ":)"; // Por seguridad, no devuelvo el password (es el encriptado, pero no importa es inseguro iugal).
-    res.status(200).json({
-      ok: true,
-      mensaje: "Login post recibido.",
-      token: token,
-      body: body,
-      id: usuarioDB._id,
-      usuario: usuarioDB,
-      menu: obtenerMenu(usuarioDB.role)
+    usuarioDB.lastlogin = new Date();
+    usuarioDB.save((err, usuarioUpdateLoginDate) => {
+
+      if (err) {
+        return res.status(500).json({
+          // ERROR DE BASE DE DATOS
+          ok: false,
+          mensaje: "Error al actualizar la fecha de login",
+          errors: err
+        });
+      }
+
+      // una vez que actualizo el login devuelvo la respuesta.
+      usuarioDB.password = ":)"; // Por seguridad, no devuelvo el password (es el encriptado, pero no importa es inseguro iugal).
+      res.status(200).json({
+        ok: true,
+        mensaje: "Login post recibido.",
+        token: token,
+        body: body,
+        id: usuarioDB._id,
+        usuario: usuarioDB,
+        menu: obtenerMenu(usuarioDB.role)
+      });
+
     });
+
+
+
   });
 }
 

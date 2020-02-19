@@ -15,8 +15,6 @@ function prueba(req, res) {
 function getOperaciones(req, res) {
     tipoOperacion.find({},
             (err, operaciones) => {
-            console.log(operaciones);
-            console.log(err);
                 if (err) {
                     return res.status(500).json({
                         ok: false,
@@ -142,7 +140,6 @@ function getProvincias(req, res) {
 
 function getLocalidaesEnDepartamento(req, res) {
     let idlocalidad = req.params.idlocalidad;
-    console.log(idlocalidad);
     localidadModel.findById(idlocalidad)
         .exec((err, localidad) => {
             if (err) {
@@ -155,7 +152,6 @@ function getLocalidaesEnDepartamento(req, res) {
                     errors: err
                 });
             }
-            console.log(localidad);
             if (!localidad) {
                 return res.status(400).json({
                     // Podría ser 400, Bad request (no encontro el usuario)

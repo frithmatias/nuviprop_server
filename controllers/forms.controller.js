@@ -4,15 +4,12 @@ var FormModel = require('../models/forms.model');
 
 function createControl(req, res) {
 	var body = req.body;
-
 	var control = new ControlModel({
 		nombre: body.nombre,
 		id: body.id,
 		type: body.type,
 		required: body.required
 	});
-	console.log(control);
-
 
 	control.save((err, controlsaved) => {
 
@@ -26,7 +23,6 @@ function createControl(req, res) {
 		
 		if(body.opciones){
 			body.opciones.forEach(opcion => {
-				console.log(opcion);
 				var guardaropcion = new ControlData({
 					control: controlsaved._id,
 					nombre: opcion
@@ -135,7 +131,6 @@ function getAllControls(req, res) {
 							});
 						}
 					});
-					console.log(controls);
 					res.status(200).json({
 						ok: true,
 						controls: controls
@@ -148,10 +143,8 @@ function getFormControls(req, res) {
 
 	var tipooperacion = req.params.tipooperacion;
 	var tipoinmueble = req.params.tipoinmueble;
-	console.log('tipooperacion', tipooperacion, ' tipoinmueble ', tipoinmueble);
 	FormModel.find({ 'tipooperacion': tipooperacion, 'tipoinmueble': tipoinmueble }).lean().exec((err, form) => {
 		// LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
-		console.log('PASO1:', form);
 		if (err) {
 			return res.status(500).json({
 				ok: false,
@@ -178,10 +171,8 @@ function getFormControlsAndData(req, res) {
 
 	var tipooperacion = req.params.tipooperacion;
 	var tipoinmueble = req.params.tipoinmueble;
-	console.log('tipooperacion', tipooperacion, ' tipoinmueble ', tipoinmueble);
 	FormModel.find({ 'tipooperacion': tipooperacion, 'tipoinmueble': tipoinmueble }).lean().exec((err, form) => {
 		// LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
-		console.log('PASO1:', form);
 		if (err) {
 			return res.status(500).json({
 				ok: false,
@@ -196,19 +187,15 @@ function getFormControlsAndData(req, res) {
 				form: []
 			});
 		}
-		console.log(form);
 		ControlModel.find({ _id: { $in: form[0].controls } }).lean().exec((err, controls) => {
-			console.log('PASO2:', controls);
 			// LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
 			ControlData.find({}).lean().exec((err, options) => {
 				controls.forEach(control => {
 					// inserto la propiedad 'options' en cada 'control'
-					if (control.type === 'select') {
+					if ((control.type === 'select') || (control.type === 'select_multiple')) {
 						control.options = options.filter(option => {
 							return control._id.toString() === option.control;
 						});
-						console.log(control.options);
-
 					}
 				});
 				res.status(200).json({
