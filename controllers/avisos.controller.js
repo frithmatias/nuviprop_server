@@ -375,10 +375,6 @@ function updateAviso(req, res) {
           });
         }
 
-        // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
-        // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
-        // el callback para que no muestre la password. El proceso de guardado ya lo hizo con aviso.save().
-
         avisoGuardada.password = ":)";
 
         res.status(200).json({
@@ -424,9 +420,6 @@ function pausedAviso(req, res) {
         });
       }
 
-      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
-      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
-      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con aviso.save().
       var msg = '';
       avisoActivada.activo ? msg = 'activo' : msg = 'desactivo';
       res.status(200).json({
@@ -472,9 +465,6 @@ function destacarAviso(req, res) {
         });
       }
 
-      // Esta instrucción es para que NO retorne el password. Ojo que NO ESTOY guardando la carita, porque
-      // La instrucción de guardado esta arriba, sólo la estoy modificando el dato en el objeto que me devuelve
-      // el callback para que no muestre la password. El proceso de guardado ya lo hizo con aviso.save().
       var msg = '';
       avisoDestacado.destacado ? msg = '' : msg = 'NO';
       res.status(200).json({

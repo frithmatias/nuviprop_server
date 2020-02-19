@@ -13,7 +13,7 @@ const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 // ==================================================
-// Autenticación Google
+// Update Token
 // ==================================================
 function updateToken(req, res) {
   // app.get('/renuevatoken', mdAuth.verificaToken, (req, res) => {
@@ -63,6 +63,9 @@ async function verify(token) {
   };
 }
 
+// ==================================================
+// Login Google
+// ==================================================
 async function loginGoogle(req, res) {
   // app.post('/google', (req, res) => {
   // app.post('/google', async(req, res) => { //async para poder usar el await verify(token) tengo que usar el async
@@ -105,7 +108,7 @@ async function loginGoogle(req, res) {
         return res.status(400).json({
           // Bad Request, el usuario existe, pero fue creado desde la app y no con Login de Google.
           ok: false,
-          mensaje: "Debe usar su autenticación normal.",
+          mensaje: "Para el email ingresado debe usar autenticación con clave.",
           error: err
         });
       } else {
@@ -183,6 +186,9 @@ async function loginGoogle(req, res) {
   // });
 }
 
+// ==================================================
+// Login Normal
+// ==================================================
 function login(req, res) {
   var body = req.body;
   UserModel.findOne({ email: body.email }, (err, usuarioDB) => {
@@ -199,7 +205,16 @@ function login(req, res) {
       return res.status(400).json({
         // ERROR DE BASE DE DATOS
         ok: false,
-        mensaje: "Credenciales incorrectas - email",
+        mensaje: "Credenciales incorrectas",
+        errors: err
+      });
+    }
+
+    if (!usuarioDB.activo) {
+      return res.status(400).json({
+        // ERROR DE BASE DE DATOS
+        ok: false,
+        mensaje: "El usuario esta inactivo. Por favor verifique que recibio el email de NuviProp y haga click en el link para activar su cuenta.",
         errors: err
       });
     }
@@ -209,10 +224,11 @@ function login(req, res) {
       return res.status(400).json({
         // ERROR DE BASE DE DATOS
         ok: false,
-        mensaje: "Credenciales incorrectas - password",
+        mensaje: "Credenciales incorrectas",
         errors: err
       });
     }
+
 
     // Si llego hasta acá, el usuario y la contraseña son correctas.
     // CREAR TOKEN!
@@ -257,7 +273,9 @@ function login(req, res) {
   });
 }
 
-
+// ==================================================
+// Obtener Menú
+// ==================================================
 function obtenerMenu(ROLE) {
   // Iconos 
   // hamburguesa menu: 'mdi mdi-menu',

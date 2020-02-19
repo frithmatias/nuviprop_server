@@ -17,6 +17,7 @@ var usuarioSchema = new Schema({
   role: { type: String, required: false, default: "USER_ROLE", enum: rolesValidos },
   favoritos: { type: [String], required: false },
   google: { type: Boolean, default: false },
+  activo: { type: Boolean, default: false },
   lastlogin: { type: Date, required: false },
   createdat: { type: Date, required: false }
 });

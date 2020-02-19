@@ -7,9 +7,11 @@ var UserController = require("../controllers/usuarios.controller");
 // Middlewares
 var mdAuth = require("../middlewares/auth.middleware");
 
-// Rutas en /user
+// Rutas en /usuarios
 app.get("/", UserController.getUsers);
 app.post("/", UserController.createUser);
+app.get('/activate/:userid', UserController.activateUser);
+app.get('/sendactivationmail/:userid', UserController.userRequestNewMail);
 app.put('/addfavourite/:userid', mdAuth.verificaToken, UserController.addFavourite);
 
 // Admin

@@ -1,13 +1,73 @@
 var bcrypt = require("bcryptjs");
 var UserModel = require("../models/usuario.model");
-
+var nodemailer = require('nodemailer');
 // var mdAuth = require('../middlewares/autenticacion');
 // RAIZ DE USUARIO
-// http://localhost:3000/usuario
+// http://localhost:3000/usuarios
 
+async function sendActivationMail(usermail, username, uid) {
+  console.log('Enviando mail a ', username, usermail, uid);
+  let transporter = nodemailer.createTransport({
+    host: "smtp.hostinger.com.ar",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: '***REMOVED***', // generated ethereal user
+      pass: '***REMOVED***' // generated ethereal password
+    }
+  });
+  let info = await transporter.sendMail({
+    from: '"🏡 NuviProp" <***REMOVED***>', // sender address
+    to: usermail, // list of receivers
+    subject: `Bienvenido ${username} ✔`, // Subject line
 
+    text: `Bienvenido ${username}, 
+
+    Por favor para activar tu cuenta hacé click aquí.
+    https://www.nuviprop.com/#/login/activate/${uid}`, // plain text body
+
+    html: `<b>Bienvenido ${username}</b>, 
+
+    Por favor para activar tu cuenta hacé click aquí.</br>
+    <b><a href="https://www.nuviprop.com/#/login/activate/${uid}">ACTIVAR CUENTA</a></b>` // html body
+
+  });
+}
+
+function userRequestNewMail(req, res){
+  // En el alert que le avisa que debe verificar el mail, se adjunta un boton para reenviar, que envía 
+  // al backend el UID.
+  var id = req.params.userid;
+  UserModel.findById(id, (err, usuario) => {
+    if (err) {
+      return res.status(400).json({
+        // ERROR DE BASE DE DATOS
+        ok: false,
+        mensaje: "Error al buscar el usuario",
+        errors: err // Este objeto con los errores viene de mongoose
+      });
+    }
+
+    if (!usuario) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: "No existe el usuario con el id " + id,
+        errors: { message: "No existe usuario con el id solicitado" }
+      });
+    }
+
+    sendActivationMail(usuario.email, usuario.nombre, usuario._id);
+
+    res.status(201).json({
+      ok: true,
+      mensaje: `Mail enviado nuevamente a ${usuario.email}`
+    });
+  });
+
+}
 
 function createUser(req, res) {
+
   var body = req.body;
   var usuario = new UserModel({
     email: body.email,
@@ -20,6 +80,9 @@ function createUser(req, res) {
     createdat: new Date()
   });
 
+  //===================================
+  // SAVE USER
+  //===================================
   usuario.save((err, usuarioGuardado) => {
     if (err) {
       return res.status(400).json({
@@ -30,11 +93,68 @@ function createUser(req, res) {
       });
     }
 
+    //===================================
+    // SEND MAIL VALIDATOR
+    //===================================
+    sendActivationMail(usuarioGuardado.email, usuarioGuardado.nombre, usuarioGuardado._id);
+
     res.status(201).json({
       ok: true,
       mensaje: "Usuario guardado correctamente.",
       usuario: usuarioGuardado, // USUARIO A GUARDAR
       usuariotoken: req.usuario // USUARIO QUE HIZO LA SOLICITUD
+    });
+  });
+}
+
+function activateUser(req, res){
+  var id = req.params.userid;
+
+  UserModel.findById(id, (err, usuario) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: "Error al buscar el usuario",
+        errors: err
+      });
+    }
+
+    if (!usuario) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: "No existe el usuario con el id " + id,
+        errors: { message: "No existe usuario con el id solicitado" }
+      });
+    }
+
+    if(usuario.activo) {
+      return res.status(400).json({
+        // Podría ser 400, Bad request (no encontro el usuario)
+        ok: false,
+        mensaje: "El usuario ya esta activo",
+        errors: { message: "El usuario que intenta activar ya se encuentra activo." }
+      });
+    }
+
+
+    usuario.activo = true;
+
+    // usuario.activo = true;
+
+    usuario.save((err, usuarioActivado) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Error al activar el usuario",
+          errors: err
+        });
+      }
+
+      res.status(200).json({
+        ok: true,
+        mensaje: 'El usuario se activo correctamente',
+        usuario: usuarioActivado
+      });
     });
   });
 }
@@ -117,7 +237,7 @@ function updateUser(req, res) {
       });
     });
   });
-} 
+}
 
 function deleteUser(req, res) {
   var id = req.params.id;
@@ -247,4 +367,4 @@ function addFavourite(req, res) {
 
 }
 
-module.exports = { createUser, readUser, updateUser, deleteUser, addFavourite, getUsers };
+module.exports = { createUser, activateUser, userRequestNewMail, readUser, updateUser, deleteUser, addFavourite, getUsers };
