@@ -56,6 +56,14 @@ function userRequestNewMail(req, res){
       });
     }
 
+    if (usuario.activo) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: "El usuario ya se encuentra activo",
+        errors: { message: "El usuario ya se encuentra activo" }
+      });
+    }
+
     sendActivationMail(usuario.email, usuario.nombre, usuario._id);
 
     res.status(201).json({
