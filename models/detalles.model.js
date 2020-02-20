@@ -26,13 +26,11 @@ var detallesSchema = new Schema({
     tipocochera: { type: String, required: [false, "El dato tipocochera es necesario en el modelo de detalles"] },
     tipocoberturacochera: { type: String, required: [false, "El dato tipocoberturacochera es necesario en el modelo de detalles"] },
     tipobalcon: { type: String, required: [false, "El dato tipobalcon es necesario en el modelo de detalles"] },
-
-    // REQUIRED: FALSE (A incluir en el formulario)
+    luminosidad: { type: String, required: [false, "El dato luminosidad es necesario en el modelo de detalles"] },
     tipopendiente: { type: String, required: [false, "El dato tipopendiente es necesario en el modelo de detalles"] },
     superficiedelterreno: { type: Number, required: [false, "El dato superficiedelterreno es necesario en el modelo de detalles"] },
     tipocosta: { type: String, required: [false, "El dato tipocosta es necesario en el modelo de detalles"] },
     tipoterreno: { type: String, required: [false, "El dato tipoterreno es necesario en el modelo de detalles"] }
 
-
-}, { collection: "detalles" });
+}, { strict: false, collection: "detalles" });
 module.exports = mongoose.model("Detalle", detallesSchema);

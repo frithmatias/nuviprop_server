@@ -187,11 +187,12 @@ function getFormControlsAndData(req, res) {
 				form: []
 			});
 		}
+
 		ControlModel.find({ _id: { $in: form[0].controls } }).lean().exec((err, controls) => {
 			// LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
 			ControlData.find({}).lean().exec((err, options) => {
 				controls.forEach(control => {
-					// inserto la propiedad 'options' en cada 'control'
+					// inserto la propiedad 'options' en cada 'select' o 'select_multiple'
 					if ((control.type === 'select') || (control.type === 'select_multiple')) {
 						control.options = options.filter(option => {
 							return control._id.toString() === option.control;

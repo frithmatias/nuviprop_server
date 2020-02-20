@@ -50,36 +50,40 @@ function getAvisosCriteria(req, res) {
   AvisoModel.aggregate([
     // Convierto los ObjectId("5e04b4bd3cb7d5a2401c9895")}) a String "5e04b4bd3cb7d5a2401c9895"
     // La función inversa es $toObjectId -> {$toObjectId: "5ab9cbfa31c2ab715d42129e"}
-    {$addFields: {
+    {
+      $addFields: {
         "localidad_id": { $toString: "$localidad" },
         "tipoinmueble_id": { $toString: "$tipoinmueble" },
         "tipooperacion_id": { $toString: "$tipooperacion" }
-    }},
-    
-    {$match: {
+      }
+    },
+
+    {
+      $match: {
         $and: [
           { "tipooperacion_id": { $in: operaciones } },
           { "tipoinmueble_id": { $in: inmuebles } },
           { "localidad_id": { $in: localidades } }
         ]
-    }},
+      }
+    },
 
     // para obtener un sólo elemento dentro de un array
     // {$project: { 
     //       "localidad": { "$arrayElemAt": [ "$localidad", 0 ] }            
     // }},
 
-    
-    {$lookup: { from: 'localidades', localField: 'localidad', foreignField: '_id', as: 'localidad' }},
-    {$lookup: { from: 'avisos_tipooperacion', localField: 'tipooperacion', foreignField: '_id', as: 'tipooperacion' }},
-    {$lookup: { from: 'avisos_tipoinmueble', localField: 'tipoinmueble', foreignField: '_id', as: 'tipoinmueble' }},
-    {$lookup: { from: 'avisos_tipocambio', localField: 'tipocambio', foreignField: '_id', as: 'tipocambio' }},
+
+    { $lookup: { from: 'localidades', localField: 'localidad', foreignField: '_id', as: 'localidad' } },
+    { $lookup: { from: 'avisos_tipooperacion', localField: 'tipooperacion', foreignField: '_id', as: 'tipooperacion' } },
+    { $lookup: { from: 'avisos_tipoinmueble', localField: 'tipoinmueble', foreignField: '_id', as: 'tipoinmueble' } },
+    { $lookup: { from: 'avisos_tipocambio', localField: 'tipocambio', foreignField: '_id', as: 'tipocambio' } },
 
     // Los campos relacionados con lookup (join) obtienen un array del objeto deseado, para hacer un deconstruct uso unwind. 
-    {$unwind: "$localidad" },
-    {$unwind: "$tipooperacion" },
-    {$unwind: "$tipoinmueble" },
-    {$unwind: "$tipocambio" }
+    { $unwind: "$localidad" },
+    { $unwind: "$tipooperacion" },
+    { $unwind: "$tipoinmueble" },
+    { $unwind: "$tipocambio" }
   ])
     .skip(desde)
     .limit(20)
@@ -95,14 +99,14 @@ function getAvisosCriteria(req, res) {
       // el segundo argumento es un callback (err, avisos) =>
 
 
-        res.status(200).json({
-          ok: true,
-          mensaje: "Peticion GET de avisos realizada correctamente.",
-          avisos: avisos,
-          total: avisos.length
-          // En standar ES6 no haría falta definir avisos: avisos porque es como redundante,
-          // pero lo vamos a dejar así para que sea mas claro.
-        });
+      res.status(200).json({
+        ok: true,
+        mensaje: "Peticion GET de avisos realizada correctamente.",
+        avisos: avisos,
+        total: avisos.length
+        // En standar ES6 no haría falta definir avisos: avisos porque es como redundante,
+        // pero lo vamos a dejar así para que sea mas claro.
+      });
 
     });
 }
@@ -140,16 +144,16 @@ function getMisAvisos(req, res) {
     });
 }
 
-function getMisFavoritos(req, res){
+function getMisFavoritos(req, res) {
   // ?pagina=n
   var pagina = req.query.pagina || 0;
   pagina = Number(pagina);
   var desde = pagina * 20;
-  
+
   // &avisos=[]
   var avisos = req.query.avisos || '';
   var arrAvisos = avisos.split(',');
- 
+
   AvisoModel.find({ '_id': { $in: arrAvisos } })
     .populate('tipooperacion')
     .populate('tipoinmueble')
@@ -227,6 +231,7 @@ function getAviso(req, res) {
 
   //Aviso.find({a, 'nombre email img role')
   AvisoModel.findById(id)
+    .populate('tipocambio')
     .populate('tipooperacion')
     .populate('tipoinmueble')
     .populate('tipounidad')
@@ -270,26 +275,26 @@ function createAviso(req, res) {
 
   var body = req.body;
   var aviso = new AvisoModel({
-    calle:  body.calle,
-    altura:  body.altura,
-    piso:  body.piso,
-    depto:  body.depto,
-    titulo:  body.titulo,
-    descripcion:  body.descripcion,
-    precio:  body.precio,
-    tipocambio:  body.tipocambio,
-    publicarprecio:  body.publicarprecio,
-    aptocredito:  body.aptocredito,
-    codigopostal:  body.codigopostal,
+    calle: body.calle,
+    altura: body.altura,
+    piso: body.piso,
+    depto: body.depto,
+    titulo: body.titulo,
+    descripcion: body.descripcion,
+    precio: body.precio,
+    tipocambio: body.tipocambio,
+    publicarprecio: body.publicarprecio,
+    aptocredito: body.aptocredito,
+    codigopostal: body.codigopostal,
     activo: false,
     destacado: false,
 
-    tipooperacion:  body.tipooperacion,
-    tipoinmueble:  body.tipoinmueble,
-    tipounidad:  body.tipounidad,
-    localidad:  body.localidad,
-    coords:  {'lat': body.lat, 'lng': body.lng},
-    usuario:  req.usuario._id,
+    tipooperacion: body.tipooperacion,
+    tipoinmueble: body.tipoinmueble,
+    tipounidad: body.tipounidad,
+    localidad: body.localidad,
+    coords: { 'lat': body.lat, 'lng': body.lng },
+    usuario: req.usuario._id,
 
     imgs: [],
   });
@@ -363,7 +368,7 @@ function updateAviso(req, res) {
     aviso.tipoinmueble = body.tipoinmueble;
     aviso.tipounidad = body.tipounidad;
     aviso.localidad = body.localidad;
-    aviso.coords = {'lat': body.lat, 'lng': body.lng};
+    aviso.coords = { 'lat': body.lat, 'lng': body.lng };
     aviso.usuario = req.usuario._id,
       // aviso.inmobiliaria = body.inmobiliaria;
       aviso.save((err, avisoGuardada) => {
@@ -424,7 +429,7 @@ function pausedAviso(req, res) {
       avisoActivada.activo ? msg = 'activo' : msg = 'desactivo';
       res.status(200).json({
         ok: true,
-        mensaje: 'La aviso se ' + msg + ' correctamente',
+        mensaje: 'El aviso se ' + msg + ' correctamente',
         aviso: avisoActivada
       });
     });
@@ -510,6 +515,8 @@ function deleteAviso(req, res) {
   });
 }
 
+// TODO: crear una capa de seguriadad para que el modelo pueda trabajar en strict:false y poder guardar en bd 
+// solo controles definidos en la coleccion de controles. Debe actuar en los ambos metodos createDetails y updateDetails. 
 function createDetails(req, res) {
   var body = req.body;
   var idaviso = req.params.idaviso;
@@ -520,9 +527,9 @@ function createDetails(req, res) {
       if (!resAvisoModel) {
         return res.status(400).json({
           ok: false,
-          mensaje: "La aviso no existe!",
+          mensaje: "El aviso no existe!",
           errors: {
-            message: "La aviso que intenta acutalizar NO existe."
+            message: "El aviso que intenta acutalizar NO existe."
           }
         });
       }
@@ -531,44 +538,13 @@ function createDetails(req, res) {
         return res.status(400).json({
           // ERROR DE BASE DE DATOS
           ok: false,
-          mensaje: "La aviso para el POST ya tiene detalles relacionados!",
+          mensaje: "El aviso para el POST ya tiene detalles relacionados!",
           errors: err // Este objeto con los errores viene de mongoose
         });
       }
 
-
-      var detalles = new DetailModel({
-
-        orientacion: body.orientacion,
-        superficiecubierta: body.superficiecubierta,
-        superficiedescubierta: body.superficiedescubierta,
-        superficiedelterreno: body.superficiedelterreno,
-        cantidaddedormitorios: body.cantidaddedormitorios,
-        cantidaddebanios: body.cantidaddebanios,
-        cantidaddetoilettes: body.cantidaddetoilettes,
-        cantidaddecocheras: body.cantidaddecocheras,
-        cantidaddeplantas: body.cantidaddeplantas,
-        cantidaddeambientes: body.cantidaddeambientes,
-        antiguedad: body.antiguedad,
-        longitudfrente: body.longitudfrente,
-        longitudfondo: body.longitudfondo,
-        tipotecho: body.tipotecho,
-        tipopendiente: body.tipopendiente,
-        tipovista: body.tipovista,
-        tipocosta: body.tipocosta,
-        tipopiso: body.tipopiso,
-        estado: body.estado,
-        ambientes: body.ambientes,
-        instalaciones: body.instalaciones,
-        servicios: body.servicios,
-        expensas: body.expensas,
-        tipoexpensas: body.tipoexpensas,
-        disposicion: body.disposicion,
-        tipocochera: body.tipocochera,
-        tipocoberturacochera: body.tipocoberturacochera,
-        tipobalcon: body.tipobalcon,
-        tipoterreno: body.tipoterreno
-      });
+      console.log(body);
+      var detalles = new DetailModel(body);
 
       detalles.save((err, detallesGuardados) => {
 
@@ -601,7 +577,7 @@ function createDetails(req, res) {
 function updateDetails(req, res) {
   var body = req.body;
   var id = req.params.idaviso;
-
+  console.log(req.body);
   AvisoModel.findById(id, (err, aviso) => {
     if (err) {
       return res.status(500).json({
@@ -637,36 +613,7 @@ function updateDetails(req, res) {
         });
       }
       // Si no entro a ninguno de los dos IF anteriores, significa que estamos listos para actualizar el aviso.
-      detalles.orientacion = body.orientacion;
-      detalles.superficiecubierta = body.superficiecubierta;
-      detalles.superficiedescubierta = body.superficiedescubierta;
-      detalles.superficiedelterreno = body.superficiedelterreno;
-      detalles.cantidaddedormitorios = body.cantidaddedormitorios;
-      detalles.cantidaddebanios = body.cantidaddebanios;
-      detalles.cantidaddetoilettes = body.cantidaddetoilettes;
-      detalles.cantidaddecocheras = body.cantidaddecocheras;
-      detalles.cantidaddeplantas = body.cantidaddeplantas;
-      detalles.cantidaddeambientes = body.cantidaddeambientes;
-      detalles.antiguedad = body.antiguedad;
-      detalles.longitudfrente = body.longitudfrente;
-      detalles.longitudfondo = body.longitudfondo;
-      detalles.tipotecho = body.tipotecho;
-      detalles.tipopendiente = body.tipopendiente;
-      detalles.tipovista = body.tipovista;
-      detalles.tipocosta = body.tipocosta;
-      detalles.tipopiso = body.tipopiso;
-      detalles.estado = body.estado;
-      detalles.ambientes = body.ambientes;
-      detalles.instalaciones = body.instalaciones;
-      detalles.servicios = body.servicios;
-      detalles.expensas = body.expensas;
-      detalles.tipoexpensas = body.tipoexpensas;
-      detalles.disposicion = body.disposicion;
-      detalles.tipocochera = body.tipocochera;
-      detalles.tipocoberturacochera = body.tipocoberturacochera;
-      detalles.tipobalcon = body.tipobalcon;
-      detalles.tipoterreno = body.tipoterreno;
-
+      detalles.set(body);
 
       // aviso.inmobiliaria = body.inmobiliaria;
       detalles.save((err, detallesGuardados) => {
@@ -685,7 +632,7 @@ function updateDetails(req, res) {
         });
       });
     });
-  })
+  });
 
 
 

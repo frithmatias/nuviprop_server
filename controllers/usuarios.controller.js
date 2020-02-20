@@ -96,7 +96,7 @@ function createUser(req, res) {
       return res.status(400).json({
         // ERROR DE BASE DE DATOS
         ok: false,
-        mensaje: "Error guardando usuario",
+        mensaje: "El email que ingresa ya se encuentra registrado.",
         errors: err // Este objeto con los errores viene de mongoose
       });
     }
