@@ -9,7 +9,7 @@ var Localidad = require('../models/localidad.model');
 // ==============================
 // Busqueda por colección
 // ==============================
-// app.get('/coleccion/:coleccion/:patron', (req, res) => {
+// app.get('/:coleccion/:patron', (req, res) => {
 
 function buscarEnColeccion(req, res) {
 
@@ -19,13 +19,10 @@ function buscarEnColeccion(req, res) {
     var regex = new RegExp(patron, 'i');
 
     var promesa;
-
     switch (coleccion) {
-
         case 'usuarios':
             promesa = buscarUsuarios(regex);
             break;
-
         case 'avisos':
             promesa = buscarAvisos(regex);
             break;
@@ -33,6 +30,7 @@ function buscarEnColeccion(req, res) {
             promesa = buscarLocalidades(patron, regex);
             break;
         default:
+
             return res.status(400).json({
                 ok: false,
                 mensaje: 'Las colecciones admitidas sólo son: usuarios, avisos',
@@ -49,11 +47,13 @@ function buscarEnColeccion(req, res) {
         });
 
     }).catch(err => {
+
         res.status(200).json({
             ok: false,
             [coleccion]: err
         });
-    })
+
+    });
 
 }
 
@@ -61,7 +61,7 @@ function buscarEnColeccion(req, res) {
 // ==============================
 // Busqueda general
 // ==============================
-// app.get('/todo/:patron', (req, res, next) => {
+// app.get('/:patron', (req, res, next) => {
 function buscarTodasColecciones(req, res) {
 
 
@@ -70,8 +70,8 @@ function buscarTodasColecciones(req, res) {
 
 
     Promise.all([
-        buscarAvisos(patron, regex),
-        buscarUsuarios(patron, regex)
+        buscarAvisos(regex),
+        buscarUsuarios(regex)
     ])
         .then(respuestas => {
 
@@ -80,11 +80,10 @@ function buscarTodasColecciones(req, res) {
                 avisos: respuestas[0],
                 usuarios: respuestas[1]
             });
-        })
+        });
 
 
 }
-
 
 function buscarAvisos(regex) {
 
@@ -92,16 +91,14 @@ function buscarAvisos(regex) {
 
         Aviso.find({})
             .or([
-                { descripcion: regex },
-                { zonificacion: regex },
-                { pais: regex },
-                { provincia: regex },
-                { ciudad: regex },
-                { barrio: regex },
-                { tipoaviso: regex },
-                { ambienteslista: regex }
+                { calle: regex },
+                { titulo: regex },
+                { descripcion: regex }
             ])
             .populate('usuario', 'nombre email')
+            .populate('localidad')
+            .populate('tipooperacion')
+            .populate('tipoinmueble')
             .exec((err, avisos) => {
 
                 if (err) {
@@ -113,9 +110,7 @@ function buscarAvisos(regex) {
     });
 }
 
-
 function buscarUsuarios(regex) {
-
     return new Promise((resolve, reject) => {
 
         Usuario.find({}, 'img nombre email role')
@@ -134,7 +129,6 @@ function buscarUsuarios(regex) {
 
     });
 }
-
 
 function buscarLocalidades(patron, regex) {
 
