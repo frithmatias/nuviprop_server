@@ -1,6 +1,8 @@
 var bcrypt = require("bcryptjs");
 var UserModel = require("../models/usuario.model");
 var nodemailer = require('nodemailer');
+var MAILER_USER = require('../config/config').MAILER_USER;
+var MAILER_PASS = require('../config/config').MAILER_PASS;
 // var mdAuth = require('../middlewares/autenticacion');
 // RAIZ DE USUARIO
 // http://localhost:3000/usuarios
@@ -12,12 +14,12 @@ async function sendActivationMail(usermail, username, uid) {
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-      user: '***REMOVED***', // generated ethereal user
-      pass: '***REMOVED***' // generated ethereal password
+      user: MAILER_USER, // generated ethereal user
+      pass: MAILER_PASS // generated ethereal password
     }
   });
   let info = await transporter.sendMail({
-    from: '"🏡 NuviProp" <***REMOVED***>', // sender address
+    from: '"🏡 NuviProp" registro@nuviprop.com', // sender address
     to: usermail, // list of receivers
     subject: `Bienvenido ${username} ✔`, // Subject line
 
