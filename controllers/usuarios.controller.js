@@ -289,7 +289,7 @@ function getUsers(req, res) {
   //Usuario.find({}, 'nombre email img role')
   UserModel.find({}, "nombre email img role google")
     .skip(desde)
-    .limit(5)
+    .limit(20)
     .exec((err, usuarios) => {
       // el segundo argumento es un callback (err, usuarios) =>
 
