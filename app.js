@@ -93,6 +93,7 @@ var formsRoutes = require("./routes/forms.routes");
 var inicioRoutes = require("./routes/inicio.routes");
 // var appRoutes = require('./routes/app');
 
+var validators = require('./pipes/validators');
 // ==================================================
 // Asignar Rutas
 // ==================================================

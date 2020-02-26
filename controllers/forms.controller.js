@@ -346,7 +346,7 @@ function getControlOptions(req, res) {
 	ControlModel.findById(idcontrol, (err, control) => {
 		console.log(control);
 		// LEAN() corre despues de FIND() y se usa para convertir objetos de mongoose en objetos de JS para poder modificarlos
-		if ((control.type === 'select') || (control.type === 'select_multiple')) {
+		if ((control) && (control.type === 'select') || (control.type === 'select_multiple')) {
 			ControlOptionsModel.find({ 'control': control._id }).lean().exec((err, options) => {
 				console.log(options);
 				// inserto la propiedad 'options' en cada 'select' o 'select_multiple'
