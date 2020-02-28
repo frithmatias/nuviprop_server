@@ -254,7 +254,7 @@ function getAviso(req, res) {
           // ERROR DE BASE DE DATOS
           ok: false,
           mensaje: "No existe la aviso con id " + id,
-          errors: { message: 'No existe un hospital con ese ID' }
+          errors: { message: 'No existe un aviso con ese ID' }
         });
       }
 
@@ -275,6 +275,13 @@ function createAviso(req, res) {
 
   var body = req.body;
   var aviso = new AvisoModel({
+    
+    tipooperacion: body.tipooperacion,
+    tipoinmueble: body.tipoinmueble,
+    tipounidad: body.tipounidad,
+    localidad: body.localidad,
+    coords: { 'lat': body.lat, 'lng': body.lng },
+
     calle: body.calle,
     altura: body.altura,
     piso: body.piso,
@@ -288,14 +295,8 @@ function createAviso(req, res) {
     codigopostal: body.codigopostal,
     activo: false,
     destacado: false,
-
-    tipooperacion: body.tipooperacion,
-    tipoinmueble: body.tipoinmueble,
-    tipounidad: body.tipounidad,
-    localidad: body.localidad,
-    coords: { 'lat': body.lat, 'lng': body.lng },
     usuario: req.usuario._id,
-
+    createdat: new Date(),
     imgs: [],
   });
 

@@ -31,6 +31,7 @@ var avisoSchema = new Schema(
     tipooperacion: { type: Schema.Types.ObjectId, ref: 'Operaciones', required: [true, "El id del tipo de operacion es un campo obligatorio"] },
     detalles: { type: Schema.Types.ObjectId, ref: 'Detalle', required: [false] },
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: [true, "El id del usuario es un campo obligatorio"] },
+    createdat: { type: Date, required: false }
     // inmobiliaria: { type: Schema.Types.ObjectId, ref: 'Inmobiliaria', required: [true, 'El id de la inmobiliaria es un campo obligatorio'] },
   },
   { collection: "avisos" }
