@@ -34,23 +34,20 @@ async function getImage(req, res) {
     console.log('Existe la imagen ', pathImage);
     res.sendFile(pathImage);
   } else {
-    if (img === 'no-img.jpg') {
-
+    // si no existe puede ser que sea una solicitud apra mostrar una imagen por defecto.
+    if (['no-img.jpg', 'xxx'].includes(img)) {
       var pathNoImage = path.resolve(__dirname, '../assets/img/no-img.jpg');
       console.log('No existe la imagen ', pathNoImage);
       res.sendFile(pathNoImage);
-
     } else {
 
-      // esta buscando una imagen que no esta en Heroku, la busco en Hostinger
+      // Si no esta en heroku y no solicita la imagen por defecto, entonces la busco en Hostinger
       await downloadHTTP(tipo, id, img).then(() => {
-
         // downloadHTTP guarda la imagen solicitada en la carpeta solicitada en Heroku y la devuelve
         if (fs.existsSync(pathImage)) {
           console.log('Existe la imagen ', pathImage);
           res.sendFile(pathImage);
         }
-
       }).catch(err => {
         console.log(err);
       });

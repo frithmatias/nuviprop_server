@@ -7,5 +7,3 @@ module.exports.MAILER_PASS = process.env.MAILER_PASS;
 module.exports.FTP_HOST = process.env.FTP_HOST;
 module.exports.FTP_USER = process.env.FTP_USER;
 module.exports.FTP_PASS = process.env.FTP_PASS;
-
-
