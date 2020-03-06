@@ -33,6 +33,10 @@ async function sendActivationMail(usermail, username, uid) {
     Por favor para activar tu cuenta hacé click aquí.</br>
     <b><a href="https://www.nuviprop.com/#/login/activate/${uid}">ACTIVAR CUENTA</a></b>` // html body
 
+  }).then((data)=>{
+    console.log('Respuesta de SendMail:', data);
+  }).catch((err)=>{
+    console.log('Error de SendMail:', err);
   });
 }
 

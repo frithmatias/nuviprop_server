@@ -7,7 +7,10 @@ function createFolder(dirPath) {
     var pathUser = path.resolve(__dirname, '../', dirPath);
     var existe = fs.existsSync(pathUser);
     if (!existe) {
-        fs.mkdirSync(pathUser);
+        console.log('creando ', pathUser);
+        fs.mkdirSync(pathUser,{recursive: true}, err => {
+            console.log(err);
+        });
     }
     // return pathUserTemp;
 }

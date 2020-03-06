@@ -4,11 +4,15 @@ var fileSystem = require("./filesystem.controller");
 var UserModel = require("../models/usuario.model");
 var AvisoModel = require("../models/aviso.model");
 var InmoModel = require("../models/inmobiliaria.model");
-
+var ftp = require('basic-ftp'); // heroku -> hostinger
 var fs = require("fs");
 var path = require("path");
+var FTP_HOST = require('../config/config').FTP_HOST;
+var FTP_USER = require('../config/config').FTP_USER;
+var FTP_PASS = require('../config/config').FTP_PASS;
 
-function uploadImagen(req, res) {
+// front -> [HTTP] -> heroku
+function uploadImagenOFF(req, res) {
   var tipo = req.params.tipo;
   var id = req.params.id;
   // tipos admitidos
@@ -20,7 +24,7 @@ function uploadImagen(req, res) {
       ok: false,
       mensaje: "Error, tipo de coleccion no valida.",
       errors: {
-        message: "Els colecciones validas solo son " + tiposValidos.join(", ")
+        message: "Las colecciones validas solo son " + tiposValidos.join(", ")
       }
     });
   }
@@ -39,8 +43,10 @@ function uploadImagen(req, res) {
   var archivo = req.files.imagen; //'imagen' es el nombre dado en body>form-data en POSTMAN
   var nombreCortado = archivo.name.split(".");
   var extensionArchivo = nombreCortado[nombreCortado.length - 1];
+
   // extensiones permitidas
   var extensionesValidas = ["png", "jpg", "gif", "jpeg"];
+
   if (extensionesValidas.indexOf(extensionArchivo) < 0) {
     return res.status(400).json({
       // ERROR DE BASE DE DATOS
@@ -57,7 +63,7 @@ function uploadImagen(req, res) {
   // crearCarpeta(tipo, id);
   var path = `./uploads/${tipo}/${id}`;
   fileSystem.createFolder(path);
-  
+
   var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`; // Uso los backticks para hacer un template literal
   path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
   archivo.mv(path, err => {
@@ -76,6 +82,115 @@ function uploadImagen(req, res) {
     grabarImagenBD(tipo, id, nombreArchivo, res);
   });
 }
+
+// front -> [HTTP] -> heroku -> [FTP] -> hostinger
+function uploadImagen(req, res) {
+  var tipo = req.params.tipo;
+  var id = req.params.id;
+  // tipos admitidos
+  var tiposValidos = ["avisos", "usuarios", "inmobiliarias"];
+
+  if (tiposValidos.indexOf(tipo) < 0) {
+    return res.status(400).json({
+      // ERROR DE BASE DE DATOS
+      ok: false,
+      mensaje: "Error, tipo de coleccion no valida.",
+      errors: {
+        message: "Las colecciones validas solo son " + tiposValidos.join(", ")
+      }
+    });
+  }
+
+  // Si no se reciben archivos devuelve error
+  if (!req.files) {
+    return res.status(500).json({
+      // ERROR DE BASE DE DATOS
+      ok: false,
+      mensaje: "Error no hay archivos para subir.",
+      errors: { message: "No se recibieron archivos para subir." }
+    });
+  }
+
+  // Obtener nombre del archivo
+  var archivo = req.files.imagen; //'imagen' es el nombre dado en body>form-data en POSTMAN
+  var nombreCortado = archivo.name.split(".");
+  var extensionArchivo = nombreCortado[nombreCortado.length - 1];
+
+  // extensiones permitidas
+  var extensionesValidas = ["png", "jpg", "gif", "jpeg"];
+
+  if (extensionesValidas.indexOf(extensionArchivo) < 0) {
+    return res.status(400).json({
+      // ERROR DE BASE DE DATOS
+      ok: false,
+      mensaje: "Error, extension no valida.",
+      errors: {
+        message:
+          "Debe de subir un archivo con extension " +
+          extensionesValidas.join(", ")
+      }
+    });
+  }
+  // si no existe la carpeta la crea
+  var path = `./uploads/${tipo}/${id}`;
+  console.log('creando carpeta', path);
+  fileSystem.createFolder(path);
+
+
+  var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`; // Uso los backticks para hacer un template literal
+
+  path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
+
+  // ================================================================
+  // FTP: envío las imagenes hacia hostinger por FTP
+  // ================================================================
+
+  async function subirHostinger() {
+    const client = new ftp.Client();
+    client.ftp.verbose = false;
+
+    console.log('creando directorio ', path);
+    client.ensureDir(path).then(data => console.log(data)).catch(err => console.log(err));
+
+    try {
+      await client.access({
+        host: FTP_HOST,
+        user: FTP_USER,
+        password: FTP_PASS,
+        secure: true
+      });
+      console.log(await client.list());
+      await client.uploadFrom(path, path);
+    }
+    catch (err) {
+      console.log(err);
+    }
+    client.close();
+  }
+
+  subirHostinger();
+
+  // ================================================================
+  // END FTP
+  // ================================================================
+
+  archivo.mv(path, err => {
+    // segundo argumento es un callback, recibe un error (claro que SOLO si se recibe un error).
+    if (err) {
+      return res.status(500).json({
+        // ERROR DE BASE DE DATOS
+        ok: false,
+        mensaje: "Error, no se pudo mover el archivo.",
+        errors: err
+      });
+    }
+    // Ya tengo la imagen en uploads/usuario ahora
+    // 1. borro la imagen vieja
+    // 2. guardo el nombre en la bbdd
+    grabarImagenBD(tipo, id, nombreArchivo, res);
+  });
+}
+
 
 function grabarImagenBD(tipo, id, nombreArchivo, res) {
   //usuario 5c75c21b70933c1784cdc8db 5c75c21b70933c1784cdc8db-924.jpg ServerResponse {...}
