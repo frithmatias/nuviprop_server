@@ -4,7 +4,8 @@ var fileSystem = require("./filesystem.controller");
 var UserModel = require("../models/usuario.model");
 var AvisoModel = require("../models/aviso.model");
 var InmoModel = require("../models/inmobiliaria.model");
-var ftp = require('basic-ftp'); // heroku -> hostinger https://www.npmjs.com/package/basic-ftp
+// var ftp = require('ftp'); // heroku -> hostinger https://www.npmjs.com/package/ftp 
+var ftp = require('basic-ftp'); // https://www.npmjs.com/package/basic-ftp
 var fs = require("fs");
 var path = require("path");
 var FTP_HOST = require('../config/config').FTP_HOST;
@@ -132,49 +133,13 @@ function uploadImagen(req, res) {
     });
   }
   // si no existe la carpeta la crea
-  var path = `./uploads/${tipo}/${id}`;
-  console.log('creando carpeta', path);
-  fileSystem.createFolder(path);
-
-
+  var pathdir = `./uploads/${tipo}/${id}`;
+  console.log('creando carpeta', pathdir);
+  fileSystem.createFolder(pathdir);
   var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`; // Uso los backticks para hacer un template literal
+  pathfile = `./uploads/${tipo}/${id}/${nombreArchivo}`;
 
-  path = `./uploads/${tipo}/${id}/${nombreArchivo}`;
-
-  // ================================================================
-  // FTP: envío las imagenes hacia hostinger por FTP
-  // ================================================================
-
-  async function subirHostinger() {
-    const client = new ftp.Client();
-    client.ftp.verbose = false;
-
-    console.log('creando directorio ', path);
-    client.ensureDir(path).then(data => console.log(data)).catch(err => console.log(err));
-
-    try {
-      await client.access({
-        host: FTP_HOST,
-        user: FTP_USER,
-        password: FTP_PASS,
-        secure: true
-      });
-      console.log(await client.list());
-      await client.uploadFrom(path, path);
-    }
-    catch (err) {
-      console.log(err);
-    }
-    client.close();
-  }
-
-  subirHostinger();
-
-  // ================================================================
-  // END FTP
-  // ================================================================
-
-  archivo.mv(path, err => {
+  archivo.mv(pathfile, err => {
     // segundo argumento es un callback, recibe un error (claro que SOLO si se recibe un error).
     if (err) {
       return res.status(500).json({
@@ -184,13 +149,51 @@ function uploadImagen(req, res) {
         errors: err
       });
     }
+
     // Ya tengo la imagen en uploads/usuario ahora
     // 1. borro la imagen vieja
     // 2. guardo el nombre en la bbdd
     grabarImagenBD(tipo, id, nombreArchivo, res);
+    
+    
+    // ================================================================
+    // SYNC HOSTINGER FTP: envío las imagenes hacia hostinger por FTP
+    // ================================================================
+    syncHostinger(pathdir, pathfile).then(()=> console.log('subido ok')).catch(err=> console.log(err));
   });
+
 }
 
+async function syncHostinger(pathdir, pathfile) {
+
+  if (fs.existsSync(pathfile)) { 
+    console.log('EL ARCHIVO EXISTE ', pathfile);
+  } else {
+    console.log('EL ARCHIVO NO EXISTE ', pathfile);
+
+  }
+  const client = new ftp.Client();
+  client.ftp.verbose = false;
+
+
+  try {
+    await client.access({
+      host: FTP_HOST,
+      user: FTP_USER,
+      password: FTP_PASS,
+      secure: false
+    });
+
+    await client.ensureDir(pathdir);
+    await client.clearWorkingDir();
+    await client.uploadFromDir(pathdir);
+  }
+  catch (err) {
+    console.log(err);
+  }
+  client.close();
+
+}
 
 function grabarImagenBD(tipo, id, nombreArchivo, res) {
   //usuario 5c75c21b70933c1784cdc8db 5c75c21b70933c1784cdc8db-924.jpg ServerResponse {...}
