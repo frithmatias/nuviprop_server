@@ -12,6 +12,11 @@ var FTP_HOST = require('../config/config').FTP_HOST;
 var FTP_USER = require('../config/config').FTP_USER;
 var FTP_PASS = require('../config/config').FTP_PASS;
 
+// En synchostinger DB_CONSTR.IndexOf('localhost') > 0 para definir ambiente de desarrollo
+var DB_CONSTR = require('../config/config').DB_CONSTR;
+
+
+
 // front -> [HTTP] -> heroku
 function uploadImagenOFF(req, res) {
   var tipo = req.params.tipo;
@@ -154,27 +159,20 @@ function uploadImagen(req, res) {
     // 1. borro la imagen vieja
     // 2. guardo el nombre en la bbdd
     grabarImagenBD(tipo, id, nombreArchivo, res);
-    
-    
+
+
     // ================================================================
     // SYNC HOSTINGER FTP: envío las imagenes hacia hostinger por FTP
     // ================================================================
-    syncHostinger(pathdir, pathfile).then(()=> console.log('subido ok')).catch(err=> console.log(err));
+    syncHostinger(pathdir).then(() => console.log('subido ok')).catch(err => console.log(err));
   });
 
 }
 
-async function syncHostinger(pathdir, pathfile) {
+async function syncHostinger(pathdir) {
 
-  if (fs.existsSync(pathfile)) { 
-    console.log('EL ARCHIVO EXISTE ', pathfile);
-  } else {
-    console.log('EL ARCHIVO NO EXISTE ', pathfile);
-
-  }
   const client = new ftp.Client();
   client.ftp.verbose = false;
-
 
   try {
     await client.access({
@@ -316,23 +314,16 @@ function grabarImagenBD(tipo, id, nombreArchivo, res) {
 }
 
 function deleteImagen(req, res) {
-  // TODO: Implementar borrar una imagen en las aviso, tengo que quitar un item con el
-  // id que me viene como parametro que es el nombre de la foto y quitarlo del array.
   var tipo = req.params.tipo;
   var id = req.params.id;
-  var filename = req.params.filename;
-
-
-
-
+  // Puede tomar el nombre del archivo o "TODAS" para elimnar todas las imagenes del aviso
+  var filename = req.params.filename; 
 
   if (tipo === "avisos") {
-
-
-
-    // ELIMINO LA IMAGEN DE LA BASE DE DATOS
+    // ===================================================
+    // BUSCO EL AVISO EN LA BASE DE DATOS
+    // ===================================================
     AvisoModel.findById(id, (err, resAvisoModel) => {
-
       if (!resAvisoModel) {
         res.status(400).json({
           ok: false,
@@ -343,31 +334,35 @@ function deleteImagen(req, res) {
         });
       }
 
-
+      // ===================================================
+      // ELIMINO ARCHIVOS FÍSICOS EN STORAGE
+      // ===================================================
+      var dirPath = `./uploads/${tipo}/${id}`;
       if (filename === 'todas') {
-
-        // BORRAR TODAS LAS IMAGENES
-        // ELIMINO TODA LA CARPETA
-        var dirPath = `./uploads/${tipo}/${id}`;
+     
+        // ELIMINA TODAS LOS ARCHIVOS DE IMAGENES
         fileSystem.deleteFolder(dirPath)
-        // ELIMINO EL ARRAY DE LA BD    
+        // ELIMINA TODOS LOS ELEMENTOS DEL ARRAY DE IMAGENES EN LA BD
         resAvisoModel.imgs = [];
-
+     
       } else {
-
-        // BORRAR SOLO UNA IMAGEN 
+     
+        // ELIMINA UN ARCHIVO DE IMAGEN
         var filePath = `./uploads/${tipo}/${id}/${filename}`;
-        // ELIMINO EL ARCHIVO FISICO DE LA CARPETA
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
-        // ELIMINO LA IMAGEN DEL ARRAY EN LA BD
+        if (fs.existsSync(filePath)) { fs.unlinkSync(filePath); }
+        // ELIMINA EL ELEMENTO DE LA IMAGNEN EN EL ARRAY DE LA BD
         resAvisoModel.imgs = resAvisoModel.imgs.filter(archivo => {
           return archivo != filename;
         });
-      }
 
-      // vuelvo a guardar el objeto sin ese archivo
+      }
+      
+      // ===================================================
+      // SINCRONIZO STORAGE EN HOSTINGER
+      // ===================================================
+      // Si mi ambiente de producción es Heroku tengo que sincronizar mi storage en Hostinger
+      syncHostinger(dirPath).then(() => console.log('eliminado ok')).catch(err => console.log(err));
+      
       resAvisoModel.save((err, avisoActualizado) => {
         res.status(200).json({
           ok: true,
@@ -375,11 +370,9 @@ function deleteImagen(req, res) {
           aviso: avisoActualizado
         });
       });
-
-
-
-
     });
+
+
   }
 
 
