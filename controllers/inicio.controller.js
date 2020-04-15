@@ -2,6 +2,7 @@ var tipoOperacion = require('../models/aviso_tipooperacion.model');
 var tipoInmueble = require('../models/aviso_tipoinmueble.model');
 var tipoUnidad = require('../models/aviso_tipounidad.model');
 var tipoCambio = require('../models/aviso_tipocambio.model');
+var cantidadHabitaciones = require('../models/filtro_habitaciones');
 var provinciaModel = require('../models/aviso_provincia.model');
 var localidadModel = require('../models/localidad.model');
 
@@ -113,6 +114,26 @@ function getCambio(req, res) {
             });
 }
 
+function getHabitaciones(req, res) {
+    cantidadHabitaciones.find({},
+            (err, opciones) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error cargando las opciones de cantidad de habitaciones.',
+                        errors: err
+                    });
+                }
+                cantidadHabitaciones.countDocuments({}, (err, conteo) => {
+                    res.status(200).json({
+                        ok: true,
+                        opciones: opciones,
+                        total: conteo
+                    });
+                });
+            });
+}
+
 function getProvincias(req, res) {
     provinciaModel.find({})
         .exec(
@@ -190,12 +211,14 @@ function getLocalidaesEnDepartamento(req, res) {
 
 
 }
+
 module.exports = {
     prueba,
     getOperaciones,
     getInmuebles,
     getUnidades,
     getCambio,
+    getHabitaciones,
     getProvincias,
     getLocalidaesEnDepartamento
 };
