@@ -1,10 +1,11 @@
-var dev = require('../config/config_dev');
 // ============================
 //  Entorno
 // ============================
 process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
+
 if (process.env.NODE_ENV === 'dev') {
+    var dev = require('../config/config_dev');
     module.exports.SEED = dev.SEED;
     module.exports.GOOGLE_CLIENT_ID = dev.GOOGLE_CLIENT_ID;
     module.exports.GOOGLE_SECRET = dev.GOOGLE_SECRET; 
