@@ -20,7 +20,7 @@
     "ftp": "^0.3.10",
     "google-auth-library": "^5.5.1",
     "heroku": "^7.39.3",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^5.7.9",
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.9.1",
